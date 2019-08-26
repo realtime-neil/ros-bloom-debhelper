@@ -1,0 +1,13 @@
+# ros-init/src/foobar/debian/foobar.service
+
+[Unit]
+Description=foobar
+After=network.target
+
+[Service]
+-EnvironmentFile=/opt/ros/kinetic/setup.sh
+-EnvironmentFile=/opt/ros/melodic/setup.sh
+ExecStart=/bin/sh -c 'find /opt/ros -type f -perm /111 -name foobar -exec {} \;'
+
+[Install]
+WantedBy=default.target
