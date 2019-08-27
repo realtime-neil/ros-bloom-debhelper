@@ -1,4 +1,4 @@
-# ros-init/src/foobar/debian/foobar.service
+# ros-init-mwe/src/foobar/debian/foobar.service
 
 [Unit]
 Description=foobar

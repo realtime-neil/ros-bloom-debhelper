@@ -1,4 +1,4 @@
-// ros-init/src/foobar/src/main.cpp
+// ros-init-mwe/src/foobar/src/main.cpp
 
 #include <unistd.h>
 #include <chrono>
