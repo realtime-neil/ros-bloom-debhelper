@@ -1,0 +1,11 @@
+# ros-init-mwe/src/foobar/debian/logrotate
+
+/var/log/foobar.log
+{
+	rotate 7
+	daily
+	missingok
+	notifempty
+	delaycompress
+	compress
+}
