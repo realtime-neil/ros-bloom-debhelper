@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(foobar)
 
+# dpkg assumes multiarch and cmake supports it:
+# https://wiki.debian.org/Multiarch/Implementation#Dynamic_debian.2F.2A_files
+# https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_STANDARD 11)
 
 add_compile_options(-Wall -Wextra -Werror -fPIC)
@@ -16,6 +21,17 @@ catkin_package(
 )
 
 add_executable(${PROJECT_NAME} src/main.cpp)
+
+# rsyslog filter rule
+configure_file(
+  etc/rsyslog.d/99-foobar.conf.in
+  etc/rsyslog.d/99-foobar.conf
+  @ONLY
+)
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-foobar.conf
+  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/
+)
 
 install(
   TARGETS ${PROJECT_NAME}
