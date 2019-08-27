@@ -22,7 +22,7 @@ catkin_package(
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-# rsyslog filter rule
+# rsyslog filter rule - because debhelper can't do this (yet)
 configure_file(
   etc/rsyslog.d/99-foobar.conf.in
   etc/rsyslog.d/99-foobar.conf
