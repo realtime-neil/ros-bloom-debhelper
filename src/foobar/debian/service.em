@@ -6,7 +6,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=@(InstallationPrefix)/setup.sh
-ExecStart=/bin/sh -c 'find @(InstallationPrefix) -type f -perm /111 -name foobar -exec {} \;'
+ExecStart=@(InstallationPrefix)/bin/@(Name)
 
 [Install]
 WantedBy=default.target
