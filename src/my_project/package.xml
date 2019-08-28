@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>foobar</name>
+  <name>my_project</name>
   <version>0.0.1</version>
-  <description>the foobar package</description>
+  <description>the my_project package</description>
   <maintainer email="whoami@example.com">whoami</maintainer>
   <license>BSD</license>
   <build_depend>cmake_modules</build_depend>
