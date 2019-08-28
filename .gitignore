@@ -1,1 +1,5 @@
 *~
+/.catkin_tools
+/build
+/devel
+/logs

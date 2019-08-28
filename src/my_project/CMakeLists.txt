@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(foobar)
+project(my_project)
 
 # dpkg assumes multiarch and cmake supports it:
 # https://wiki.debian.org/Multiarch/Implementation#Dynamic_debian.2F.2A_files
@@ -24,12 +24,12 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 
 # rsyslog filter rule - because debhelper can't do this (yet)
 configure_file(
-  etc/rsyslog.d/99-foobar.conf.in
-  etc/rsyslog.d/99-foobar.conf
+  etc/rsyslog.d/99-slug.conf.in
+  etc/rsyslog.d/99-${PROJECT_NAME}.conf
   @ONLY
 )
 install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-foobar.conf
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PROJECT_NAME}.conf
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/
 )
 
