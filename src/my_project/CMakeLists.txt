@@ -20,21 +20,32 @@ catkin_package(
   DEPENDS
 )
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+# because underscores in an executable basename look weird
+string(REPLACE "_" "-" EXE_NAME "${PROJECT_NAME}")
+add_executable(${EXE_NAME} src/main.cpp)
+
+# because ROS_DISTRO is an env var, not (yet) a cmake var
+if ("" STREQUAL "$ENV{ROS_DISTRO}")
+  message(FATAL_ERROR "undefined env var ROS_DISTRO")
+endif()
+set(ROS_DISTRO "$ENV{ROS_DISTRO}")
+
+# because it's handy to have the debian package name
+string(REPLACE "_" "-" PACKAGE_NAME "ros-${ROS_DISTRO}-${PROJECT_NAME}")
 
 # rsyslog filter rule - because debhelper can't do this (yet)
 configure_file(
   etc/rsyslog.d/99-slug.conf.in
-  etc/rsyslog.d/99-${PROJECT_NAME}.conf
+  etc/rsyslog.d/99-${PACKAGE_NAME}.conf
   @ONLY
 )
 install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PROJECT_NAME}.conf
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PACKAGE_NAME}.conf
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/
 )
 
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS ${EXE_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

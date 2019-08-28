@@ -5,7 +5,7 @@
 #
 # ros-bloom-debhelper/src/my_project/debian/logrotate.em
 
-/var/log/@(Name).log
+/var/log/@(Package).log
 {
 	rotate 7
 	daily
