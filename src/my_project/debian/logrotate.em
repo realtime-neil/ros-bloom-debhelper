@@ -3,7 +3,7 @@
 # This is a logrotate config file generated via bloom from the following
 # template:
 #
-# ros-init-mwe/src/foobar/debian/logrotate.em
+# ros-bloom-debhelper/src/my_project/debian/logrotate.em
 
 /var/log/foobar.log
 {
