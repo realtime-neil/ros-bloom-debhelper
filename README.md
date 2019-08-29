@@ -93,15 +93,16 @@ https://answers.ros.org/question/133966/install-directly-to-etcudevrulesd/?answe
 
 As of this writing, the latest release of `bloom` is [0.8.0][bloom-0.8.0]
 ([c247a13](https://github.com/ros-infrastructure/bloom/commit/c247a1320172867ce87c94939df1f166d25a0bb0))
-and (most of) the mechanism to which `mikepurvis` alludes is implemented in
-`bloom/generators/debian/generator.py`, within the function
+and the mechanism to which `mikepurvis` alludes is implemented within
+`bloom/generators/debian/generator.py`, in and around the function
 `place_template_files`:
 
 https://github.com/ros-infrastructure/bloom/blob/c247a1320172867ce87c94939df1f166d25a0bb0/bloom/generators/debian/generator.py#L838
 
 During the execution of `bloom-release`, `place_template_files` will copy the
-`debian` directory from the catkin project (thing being bloomed) to the Debian
-package (thing being generated). The copied contents are combined with various
+`debian` directory from the catkin project (thing being bloomed) to the
+"Debianized release" (thing being generated). The copied contents are combined
+with various
 [templates](https://github.com/ros-infrastructure/bloom/tree/master/bloom/generators/debian/templates)
 and then the process of template expansion begins.
 
