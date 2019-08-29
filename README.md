@@ -115,10 +115,13 @@ with various
 and then the process of template expansion begins.
 
 Template files have a `*.em` suffix and any `*.em` file found in the `debian`
-directory will be expanded using [`empy`][empy]. How `empy` expands every
-`@(Variable)` instance within a given template `foobar.em` to produce
-`foobar`. It helps that `bloom-generate` defines several variables specific to
-the package being bloomed. Here is a partial enumeration of those variables:
+directory will be expanded using [`empy`][empy]. For each template file, `empy`
+replaces any variable reference with the associated value and writes the
+expanded result into the `.em`-suffix-stripped filename. For example, a
+template `foobar.txt.em` would be `empy`-expanded to produce
+`foobar.txt`. `bloom-generate` explicitly defines the set of variable-value
+pairs `empy` will use. The following is a partial enumeration of those
+variables:
 
 * `@(Copyright)`
 * `@(DebianInc)`
