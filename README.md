@@ -140,8 +140,8 @@ built.
 When `debhelper` goes looking for files, it searches under the `debian`
 directory. Some of these files are [required][dreq]. Other files are
 [optional][dother]. For most of the optional files, each has within its
-basename the prefix of the package to which it belongs. Consider the following
-examples for the ficticious package `foo`:
+basename (usually as `package.` prefix) the name of the package to which it
+belongs. Consider the following examples for the ficticious package `foo`:
 
 * `debian/foo.init`: init script, installs to `/etc/init.d/foo`
 * `debian/foo.cron.hourly`: hourly cron job, installs to `/etc/cron.hourly/foo`
@@ -149,9 +149,7 @@ examples for the ficticious package `foo`:
 [dreq]:https://www.debian.org/doc/manuals/maint-guide/dreq.en.html
 [dother]:https://www.debian.org/doc/manuals/maint-guide/dother.en.html
 
-There are [many](https://www.debian.org/doc/manuals/maint-guide/dreq.en.html),
-[many]() files it has some nice fallback behavior in how it goes looking for
-files:
+Additionally, and crucially, `debhelper` also uses other files:
 
 > Note for the first (or only) binary package listed in debian/control,
 > debhelper will use debian/foo when there's no debian/package.foo
@@ -162,27 +160,22 @@ files:
 
 -- http://man7.org/linux/man-pages/man7/debhelper.7.html, "Debhelper Config Files" section
 
-This association to an implicit package name is useful, say, when you don't
-know the name of the package for which you want to install artifacts. This is
-exactly the case for ROS packages targeting a Debian-like OS; i.e., the
-developer doesn't know the name of the package until _after_ the package is
-bloomed.
+This association to an implicit package name is useful when, say, you don't
+actually know the name of the package for which you want to install
+artifacts. This is exactly the case for ROS packages targeting a Debian-like
+OS. The Debian package name is of the form `ros-${ROS_DISTRO}-catkin-project`
+and the `${ROS_DISTRO}` could be one of several identifiers through which
+`bloom-release` iterates. The quantity and nature of package names is known to
+the maintainer only _after_ the bloom succeeds.
 
+# Caveats?
 
-
-Better yet, one can use template files. Files within the catkin project
-`debian` directory bearing the `TEMPLATE_EXTENSION` (defined in
-[`bloom/generators/debian/generator.py`][bloomgendeb] and defaulting to `.em`)
-will be expanded via [`empy`][empy]. This is the mechanism `bloom` uses to
-generate For details, see the contents of
-https://github.com/ros-infrastructure/bloom/tree/master/bloom/generators/debian/templates
-.
-
-
-In the case where you have a `debian/foo` and a `debian/foo.em`, the expansion of the latter overwrites the former.
-
-todo: write this
-
+* In the case where you have a `debian/foo` and a `debian/foo.em`, the
+  expansion of the latter overwrites the former.
+  
+* The example `rsyslog` filter rule file is a `cmake` trick, not a `debhelper`
+  trick. It's there to illustrate how such a thing would interact with
+  `dh_logrotate`.
 
 
 [bloom-0.8.0]:https://github.com/ros-infrastructure/bloom/releases/tag/0.8.0
