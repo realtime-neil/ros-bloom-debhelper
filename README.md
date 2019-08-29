@@ -12,6 +12,7 @@ ros-bloom-debhelper
         `-- my_project
             |-- CMakeLists.txt
             |-- debian
+            |   |-- TODO.em
             |   |-- cron.daily.em
             |   |-- logrotate.em
             |   |-- service.em
@@ -25,15 +26,11 @@ ros-bloom-debhelper
 
     $ bloom-release --rosdistro melodic ...
     ...
-    $ git clone file:///path/to/my_catkin_ws-release.git
+    $ # checkout release, gbp buildpackage
     ...
-    $ cd my_catkin_ws-release
-    $ git checkout debian/melodic/bionic/my_project
-    $ gbp buildpackage -us -uc --source-option='-i.*'
-    ...
-    $ dpkg-deb -R ../ros-melodic-my-project_0.0.1_amd64.deb ../ros-melodic-my-project_0.0.1_amd64.deb.raw
-    $ tree ../ros-melodic-my-project_0.0.1_amd64.deb.raw
-    ../ros-melodic-my-project_0.0.1_amd64.deb.raw/
+    $ dpkg-deb --raw-extract ../ros-melodic-my-project_0.0.1_amd64.deb ./raw
+    $ tree ./raw
+    ./raw
     |-- DEBIAN
     |   |-- conffiles
     |   |-- control
@@ -56,6 +53,12 @@ ros-bloom-debhelper
     |   `-- udev
     |       `-- rules.d
     |           `-- 60-ros-melodic-my-project.rules
+    `-- usr
+        `-- share
+            `-- doc
+                `-- ros-melodic-my-project
+                    |-- TODO.Debian
+                    `-- changelog.Debian.gz
     ...
 
 # What?
@@ -125,14 +128,6 @@ the package being bloomed. Here is a partial enumeration of those variables:
 * `@(InstallationPrefix)`
 * `@(Maintainer)`
 * `@(Package)`
-* `@(change_date)`
-* `@(change_version)`
-* `@(changelog)`
-* `@(debhelper_version)`
-* `@(format)`
-* `@(main_email)`
-* `@(main_name)`
-* `@(release_tag)`
 
 `bloom-generate` tacitly assumes you will use `debhelper` to build your Debian
 packages --- it uses a `debian/rules.em` template that explicitly invokes
