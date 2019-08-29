@@ -88,6 +88,12 @@ one (or more) of the following:
 
 # How?
 
+Within your ROS project directory (where you keep the `CMakeList.txt` and
+`package.xml`), create a `debian` directory. Put your `debhelper`-compatible
+files in there.
+
+# Huh?
+
 There are really two mechanisms enabling this trick. The first is the manner by
 which `bloom` populates the `debian` directory of the released package. The
 second is the fallback behavior in [`debhelper`][debhelper].
