@@ -88,7 +88,7 @@ one (or more) of the following:
 
 # How?
 
-Within your ROS project directory (where you keep the `CMakeList.txt` and
+Within your ROS project directory (where you keep the `CMakeLists.txt` and
 `package.xml`), create a `debian` directory. Put your `debhelper`-compatible
 files in there.
 
