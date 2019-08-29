@@ -170,7 +170,7 @@ the maintainer only _after_ the bloom succeeds.
 
 # Caveats?
 
-* In the case where you have a `debian/foo` and a `debian/foo.em`, the
+* In the case where you have both a `debian/foo` and a `debian/foo.em`, the
   expansion of the latter overwrites the former.
   
 * The example `rsyslog` filter rule file is a `cmake` trick, not a `debhelper`
