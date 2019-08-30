@@ -90,7 +90,13 @@ one (or more) of the following:
 
 Within your ROS project directory (where you keep the `CMakeLists.txt` and
 `package.xml`), create a `debian` directory. Put your `debhelper`-compatible
-files in there.
+files in there. Here's a sampling, showing where each lands after installation:
+
+    catkin_ws/src/my_project/debian/TODO       -> /usr/share/doc/ros-${ROS_DISTRO}-my-project/TODO.Debian
+    catkin_ws/src/my_project/debian/cron.daily -> /etc/cron.daily/ros-${ROS_DISTRO}-my-project
+    catkin_ws/src/my_project/debian/logrotate  -> /etc/logrotate.d/ros-${ROS_DISTRO}-my-project
+    catkin_ws/src/my_project/debian/service    -> /lib/systemd/system/ros-${ROS_DISTRO}-my-project.service
+    catkin_ws/src/my_project/debian/udev       -> /lib/udev/rules.d/60-ros-${ROS_DISTRO}-my-project.rules
 
 # Huh?
 
