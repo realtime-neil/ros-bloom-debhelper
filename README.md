@@ -158,7 +158,7 @@ When `debhelper` goes looking for files, it searches under the `debian`
 directory. Some of these files are [required][dreq]. Other files are
 [optional][dother]. For most of the optional files, each has within its
 basename (usually as `package.` prefix) the name of the package to which it
-belongs. Consider the following examples for the ficticious package `foo`:
+belongs. Consider the following examples for the fictitious package `foo`:
 
 * `debian/foo.init`: init script, installs to `/etc/init.d/foo`
 * `debian/foo.cron.hourly`: hourly cron job, installs to `/etc/cron.hourly/foo`
