@@ -194,6 +194,21 @@ the maintainer only _after_ the bloom succeeds.
   trick. It's there to illustrate how such a thing would interact with
   `dh_logrotate`.
 
+# Credits
+
+This repository was borne out of a question I asked on ROS Answers:
+https://answers.ros.org/question/331528/how-to-bloom-with-init-system-integration/
+
+Thanks to [@mikepurvis][mikepurvis] who, back in 2014, asked --- and then
+answered --- the question about the proper way to install a `udev` rules file.
+
+Thanks to [@gvdhoorn][gvdhoorn], both for pointing me toward the
+already-answered questions relevant to mine, and for discussing various
+shortcomings inherent to my approach.
+
+Thanks to [@nuclearsandwich][nuclearsandwich] for the insight into, and
+explanations for, some little-known ROS package conventions.
+
 
 [bloom-0.8.0]:https://github.com/ros-infrastructure/bloom/releases/tag/0.8.0
 [bloom]:https://github.com/ros-infrastructure/bloom
@@ -202,6 +217,9 @@ the maintainer only _after_ the bloom succeeds.
 [debhelper]:https://salsa.debian.org/debian/debhelper
 [debmaintguide]:https://www.debian.org/doc/manuals/maint-guide/
 [empy]:http://www.alcyone.com/software/empy/
+[gvdhoorn]:https://answers.ros.org/users/5184/gvdhoorn/
 [ros]:https://www.ros.org/
 [systemdservice]:https://www.freedesktop.org/software/systemd/man/systemd.service.html
 [udev]:http://man7.org/linux/man-pages/man7/udev.7.html
+[mikepurvis]:https://answers.ros.org/users/270/mikepurvis/
+[nuclearsandwich]:https://answers.ros.org/users/30752/nuclearsandwich/
