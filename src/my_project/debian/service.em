@@ -10,8 +10,7 @@ Description="@(Description)"
 After=network.target
 
 [Service]
-EnvironmentFile=@(InstallationPrefix)/setup.sh
-ExecStart=@(InstallationPrefix)/bin/@(Name.replace('_','-'))
+ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && @(InstallationPrefix)/bin/@(Name.replace('_','-'))
 
 [Install]
 WantedBy=default.target
