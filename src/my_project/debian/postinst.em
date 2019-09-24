@@ -32,18 +32,18 @@ set -euvx
 
 case "$1" in
     configure)
-        ####################
-        # UDEV STUFF BEGIN #
-        ####################
+        ########################
+        # COPYPASTA UDEV BEGIN #
+        ########################
         udevadm control --reload-rules
         udevadm trigger
-        ##################
-        # UDEV STUFF END #
-        ##################
+        ######################
+        # COPYPASTA UDEV END #
+        ######################
 
-        #######################
-        # SYSUSER STUFF BEGIN #
-        #######################
+        ###########################
+        # COPYPASTA SYSUSER BEGIN #
+        ###########################
         export CONF_HOME='/nonexistent'
         export CONF_USERNAME="@(Package)"
         if ! getent passwd "$CONF_USERNAME" ; then
@@ -63,9 +63,9 @@ case "$1" in
         if [ ! -d "$CONF_HOME" ] ; then
             usermod --move-home --home "$CONF_HOME" "$CONF_USERNAME"
         fi
-        #####################
-        # SYSUSER STUFF END #
-        #####################
+        #########################
+        # COPYPASTA SYSUSER END #
+        #########################
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
         ;;

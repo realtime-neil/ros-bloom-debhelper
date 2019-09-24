@@ -32,9 +32,9 @@ set -euvx
 
 case "$1" in
     remove|upgrade|deconfigure)
-        #######################
-        # SYSUSER STUFF BEGIN #
-        #######################
+        ###########################
+        # COPYPASTA SYSUSER BEGIN #
+        ###########################
         export CONF_HOME='/nonexistent'
         export CONF_USERNAME="@(Package)"
         # Transition from dh-sysuser=1.3. It did not passed mainainer script
@@ -47,9 +47,9 @@ case "$1" in
                 fi
                 ;;
         esac
-        #####################
-        # SYSUSER STUFF END #
-        #####################
+        #########################
+        # COPYPASTA SYSUSER END #
+        #########################
         ;;
     failed-upgrade)
         ;;
