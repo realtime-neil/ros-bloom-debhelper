@@ -28,30 +28,50 @@
 # * https://medium.com/opsops/dh-sysuser-6bd3e3d623dd
 # * https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
 
-set -euvx
+set -eu
+
+readonly this="$(readlink -f "$0")"
+readonly whatami="@(Package).$(basename "${this}")"
+
+log() { echo "${whatami}[$$]: $@" >&2; }
+error() { log "ERROR: $@"; }
+warning() { log "WARNING: $@"; }
+info() { log "INFO: $@"; }
+die() {
+    error "$@"
+    exit 1
+}
 
 case "$1" in
     configure)
-        ########################
-        # COPYPASTA UDEV BEGIN #
-        ########################
-        udevadm control --reload-rules
-        udevadm trigger
-        ######################
-        # COPYPASTA UDEV END #
-        ######################
+        ##############
+        # UDEV BEGIN #
+        ##############
+        if ischroot; then
+            warning "chroot detected, skipping udev bounce"
+        else
+            if ! udevadm control --reload-rules; then
+                die "FAILURE: udevadm control --reload-rules"
+            fi
+            if ! udevadm trigger; then
+                die "FAILURE: udevadm trigger"
+            fi
+        fi
+        ############
+        # UDEV END #
+        ############
 
-        ###########################
-        # COPYPASTA SYSUSER BEGIN #
-        ###########################
+        #################
+        # SYSUSER BEGIN #
+        #################
         export CONF_HOME='/nonexistent'
         export CONF_USERNAME="@(Package)"
-        if ! getent passwd "$CONF_USERNAME" ; then
+        if ! getent passwd "$CONF_USERNAME"; then
             emptydir=$(mktemp -d) # to inhibit /etc/skel
             set -- --system --shell /usr/sbin/nologin
             # Create home directory for system user, unless it is /nonexistent,
             # which must stay nonexistent.
-            if [ "${CONF_HOME}" != '/nonexistent' ] ; then
+            if [ "${CONF_HOME}" != '/nonexistent' ]; then
                 set -- "$@" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
             fi
             useradd "$@" "${CONF_USERNAME}"
@@ -60,19 +80,18 @@ case "$1" in
         # If user already have another home directory, we use `usermod
         # --move-home'. Unfortunately, new home is required to be non-existent
         # (and different from previous), so this conditional is required.
-        if [ ! -d "$CONF_HOME" ] ; then
+        if ! [ -d "${CONF_HOME}" ]; then
             usermod --move-home --home "$CONF_HOME" "$CONF_USERNAME"
         fi
-        #########################
-        # COPYPASTA SYSUSER END #
-        #########################
+        ###############
+        # SYSUSER END #
+        ###############
         ;;
-    abort-upgrade|abort-remove|abort-deconfigure)
-        ;;
+    abort-upgrade | abort-remove | abort-deconfigure) ;;
+
     *)
-        echo "postinst called with unknown argument \"$1\"" >&2
-        exit 1
-    ;;
+        die "postinst called with unknown argument \"$1\""
+        ;;
 esac
 
 #DEBHELPER#

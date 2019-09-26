@@ -28,31 +28,31 @@
 # * https://medium.com/opsops/dh-sysuser-6bd3e3d623dd
 # * https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
 
-set -euvx
+set -eu
 
 case "$1" in
-    remove|upgrade|deconfigure)
-        ###########################
-        # COPYPASTA SYSUSER BEGIN #
-        ###########################
+    remove | upgrade | deconfigure)
+        #################
+        # SYSUSER BEGIN #
+        #################
         export CONF_HOME='/nonexistent'
         export CONF_USERNAME="@(Package)"
         # Transition from dh-sysuser=1.3. It did not passed mainainer script
         # arguments to sysuser-helper.
-        case ${1:-} in
-            remove|abort-install)
+        case "${1:-}" in
+            remove | abort-install)
                 rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
-                if ! [ -d "${CONF_HOME}" ] ; then
+                if ! [ -d "${CONF_HOME}" ]; then
                     userdel --force "${CONF_USERNAME}"
                 fi
                 ;;
         esac
-        #########################
-        # COPYPASTA SYSUSER END #
-        #########################
+        ###############
+        # SYSUSER END #
+        ###############
         ;;
-    failed-upgrade)
-        ;;
+    failed-upgrade) ;;
+
     *)
         echo "prerm called with unknown argument \`$1'" >&2
         exit 1
