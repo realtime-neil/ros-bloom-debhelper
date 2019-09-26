@@ -31,14 +31,14 @@
 set -eu
 
 readonly this="$(readlink -f "$0")"
-readonly whatami="$(basename "${this}")"
+readonly whatami="@(Package).$(basename "${this}")"
 
-log() { echo "${whatami}[$$]: $@" >&2; }
-error() { log "ERROR: $@"; }
-warning() { log "WARNING: $@"; }
-info() { log "INFO: $@"; }
+log() { echo "${whatami}[$$]: $*" >&2; }
+error() { log "ERROR: $*"; }
+warning() { log "WARNING: $*"; }
+info() { log "INFO: $*"; }
 die() {
-    error "$@"
+    error "$*"
     exit 1
 }
 
@@ -72,9 +72,9 @@ case "$1" in
             # Create home directory for system user, unless it is /nonexistent,
             # which must stay nonexistent.
             if [ "${CONF_HOME}" != '/nonexistent' ]; then
-                set -- "$@" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
+                set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
             fi
-            useradd "$@" "${CONF_USERNAME}"
+            useradd "$*" "${CONF_USERNAME}"
             rmdir "${emptydir}"
         fi
         # If user already have another home directory, we use `usermod

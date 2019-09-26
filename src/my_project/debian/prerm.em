@@ -31,14 +31,14 @@
 set -eu
 
 readonly this="$(readlink -f "$0")"
-readonly whatami="$(basename "${this}")"
+readonly whatami="@(Package).$(basename "${this}")"
 
-log() { echo "${whatami}[$$]: $@" >&2; }
-error() { log "ERROR: $@"; }
-warning() { log "WARNING: $@"; }
-info() { log "INFO: $@"; }
+log() { echo "${whatami}[$$]: $*" >&2; }
+error() { log "ERROR: $*"; }
+warning() { log "WARNING: $*"; }
+info() { log "INFO: $*"; }
 die() {
-    error "$@"
+    error "$*"
     exit 1
 }
 
