@@ -53,7 +53,9 @@ case "$1" in
         # arguments to sysuser-helper.
         case "${1:-}" in
             remove | abort-install)
-                rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
+                if [ -d "${CONF_HOME}" ]; then
+                    rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
+                fi
                 if ! [ -d "${CONF_HOME}" ]; then
                     userdel --force "${CONF_USERNAME}"
                 fi
