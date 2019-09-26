@@ -74,7 +74,7 @@ case "$1" in
             if [ "${CONF_HOME}" != '/nonexistent' ]; then
                 set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
             fi
-            useradd "$*" "${CONF_USERNAME}"
+            useradd $* "${CONF_USERNAME}"
             rmdir "${emptydir}"
         fi
         # If user already have another home directory, we use `usermod
