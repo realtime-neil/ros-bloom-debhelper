@@ -31,7 +31,7 @@
 set -eu
 
 readonly this="$(readlink -f "$0")"
-readonly whatami="@(Package).$(basename "${this}")"
+readonly whatami="$(basename "${this}")"
 
 log() { echo "${whatami}[$$]: $@" >&2; }
 error() { log "ERROR: $@"; }
@@ -90,7 +90,7 @@ case "$1" in
     abort-upgrade | abort-remove | abort-deconfigure) ;;
 
     *)
-        die "postinst called with unknown argument \"$1\""
+        die "unknown argument: \"$1\""
         ;;
 esac
 

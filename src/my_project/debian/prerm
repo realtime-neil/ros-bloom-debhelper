@@ -30,6 +30,18 @@
 
 set -eu
 
+readonly this="$(readlink -f "$0")"
+readonly whatami="$(basename "${this}")"
+
+log() { echo "${whatami}[$$]: $@" >&2; }
+error() { log "ERROR: $@"; }
+warning() { log "WARNING: $@"; }
+info() { log "INFO: $@"; }
+die() {
+    error "$@"
+    exit 1
+}
+
 case "$1" in
     remove | upgrade | deconfigure)
         #################
@@ -54,8 +66,7 @@ case "$1" in
     failed-upgrade) ;;
 
     *)
-        echo "prerm called with unknown argument \`$1'" >&2
-        exit 1
+        die "unknown argument: \"$1\""
         ;;
 esac
 
