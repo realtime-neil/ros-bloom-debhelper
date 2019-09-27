@@ -10,7 +10,9 @@ Description="@(Description)"
 After=network.target
 
 [Service]
-ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && @(InstallationPrefix)/bin/@(Name.replace('_','-'))
+User=@(Package[:32])
+Environment='ROS_HOME=/tmp/@(Package)'
+ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && roslaunch my_project main.launch'
 
 [Install]
 WantedBy=default.target

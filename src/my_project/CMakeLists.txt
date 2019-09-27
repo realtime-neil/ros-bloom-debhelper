@@ -44,9 +44,24 @@ install(
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/
 )
 
+# https://wiki.ros.org/catkin/CMakeLists.txt#Installing_roslaunch_Files_or_Other_Resources
+install(
+  FILES launch/main.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+# > type="nodetype"
+# >     Node type. There must be a corresponding executable with the same name.
+#
+# -- https://wiki.ros.org/roslaunch/XML/node
+#
+# Yep, it has to be an executable, but that executable must be installed to the
+# CATKIN_PACKAGE_BIN_DESTINATION. `roslaunch` only finds executables installed
+# to the CATKIN_PACKAGE_BIN_DESTINATION and definitely NOT the
+# CATKIN_GLOBAL_BIN_DESTINATION. Because of course it does.
 install(
   TARGETS ${EXE_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
