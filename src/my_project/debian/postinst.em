@@ -65,7 +65,9 @@ case "$1" in
         # SYSUSER BEGIN #
         #################
         export CONF_HOME='/nonexistent'
-        export CONF_USERNAME="@(Package)"
+        # > Usernames may only be up to 32 characters long.
+        # -- man 8 useradd, "Caveats"
+        export CONF_USERNAME="$(echo "@(Package)" | head -c32)"
         if ! getent passwd "$CONF_USERNAME"; then
             emptydir=$(mktemp -d) # to inhibit /etc/skel
             set -- --system --shell /usr/sbin/nologin
