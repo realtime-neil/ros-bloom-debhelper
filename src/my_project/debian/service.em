@@ -42,7 +42,7 @@ RuntimeDirectory=@(Package)
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
 # export the RUNTIME_DIRECTORY env var, so we have to do this:
-Environment=RUNTIME_DIRECTORY=/run/@$(Package)
+Environment=RUNTIME_DIRECTORY=/run/@(Package)
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
 # have any of the following:
