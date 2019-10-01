@@ -75,8 +75,8 @@ ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 # design. You can't stop it. You can't configure its breathtakingly stupid
 # imitation of logrotate's file-moving behavior. You can't funnel its
 # ever-growing, filesystem-crippling tracts of plaintext into /dev/null. Like
-# so much else in the ROS ecosystem, roscpp logging begs the question "Is this
-# _actual_ malice or just a degenerate confluence of weapons-grade ineptitude."
+# so much else in the ROS ecosystem, roscpp logging begs the question, "Is this
+# _actual_ malice or just a degenerate confluence of weapons-grade ineptitude?"
 #
 # Here's my attempt at a work-around: override ROS_HOME to a directory under
 # /tmp/. This won't stop roscpp from dumping (perhaps) Gigabytes of text into
