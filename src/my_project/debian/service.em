@@ -37,24 +37,37 @@ After=network.target
 # -- man 8 useradd
 User=@(Package[:32])
 
-# # > PermissionsStartOnly=
-# #
-# # > Takes a boolean argument. If true, the permission-related execution
-# # > options, as configured with User= and similar options (see systemd.exec(5)
-# # > for more information), are only applied to the process started with
-# # > ExecStart=, and not to the various other ExecStartPre=, ExecStartPost=,
-# # > ExecReload=, ExecStop=, and ExecStopPost= commands. If false, the setting
-# # > is applied to all configured commands the same way. Defaults to false.
-# #
-# # -- man 5 systemd.service
-# PermissionsStartOnly=true
-
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
 RuntimeDirectory=@(Package)
-StateDirectory=@(Package)
-CacheDirectory=@(Package)
-LogsDirectory=@(Package)
-ConfigurationDirectory=@(Package)
+
+Environment=RUNTIME_DIRECTORY=/run/@$(Package)
+
+# systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
+# have any of the following:
+#
+#StateDirectory=@(Package)
+#CacheDirectory=@(Package)
+#LogsDirectory=@(Package)
+#ConfigurationDirectory=@(Package)
+#
+# ...so fake it:
+
+PermissionsStartOnly=true
+
+Environment=STATE_DIRECTORY=/var/lib/@(Package)
+Environment=CACHE_DIRECTORY=/var/cache/@(Package)
+Environment=LOGS_DIRECTORY=/var/log/@(Package)
+Environment=CONFIGURATION_DIRECTORY=/etc/@(Package)
+
+ExecStartPre=/bin/sh -c 'mkdir -vp ${STATE_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'mkdir -vp ${CACHE_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'mkdir -vp ${LOGS_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'mkdir -vp ${CONFIGURATION_DIRECTORY}'
+
+ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${STATE_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CACHE_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${LOGS_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 
 Environment=ROS_HOME=/tmp/@(Package)
 ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch my_project main.launch'
