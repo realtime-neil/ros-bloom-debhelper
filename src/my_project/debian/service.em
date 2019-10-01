@@ -40,6 +40,8 @@ User=@(Package[:32])
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
 RuntimeDirectory=@(Package)
 
+# systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
+# export the RUNTIME_DIRECTORY env var, so we have to do this:
 Environment=RUNTIME_DIRECTORY=/run/@$(Package)
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
@@ -69,8 +71,22 @@ ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CACHE_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${LOGS_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 
+# roscpp logging is a stunning and epitomic demonstration of unparalleled bad
+# design. You can't stop it. You can't configure its breathtakingly stupid
+# imitation of logrotate's file-moving behavior. You can't funnel its
+# ever-growing, filesystem-crippling tracts of plaintext into /dev/null. Like
+# so much else in the ROS ecosystem, roscpp logging begs the question "Is this
+# _actual_ malice or just a degenerate confluence of weapons-grade ineptitude."
+#
+# Here's my attempt at a work-around: override ROS_HOME to a directory under
+# /tmp/. This won't stop roscpp from dumping (perhaps) Gigabytes of text into
+# your filesystem, but --- assuming your init is smart enough to purge /tmp/ on
+# a low drive space condition --- it may prevent a runaway ROS _process_ (not a
+# "node", you presumptive fscks) from rendering your rootfs unbootable.
 Environment=ROS_HOME=/tmp/@(Package)
+ExecStartPre=/bin/sh -c 'rm -rf ${ROS_HOME}'
 ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch my_project main.launch'
+ExecStopPost=/bin/sh -c 'rm -rf ${ROS_HOME}'
 
 [Install]
 WantedBy=default.target
