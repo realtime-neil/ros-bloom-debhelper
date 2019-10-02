@@ -37,6 +37,11 @@ After=network.target
 # -- man 8 useradd
 User=@(Package[:32])
 
+# references:
+# * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities
+# * http://man7.org/linux/man-pages/man7/capabilities.7.html
+CapabilityBoundingSet=CAP_SYS_NICE
+
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
 RuntimeDirectory=@(Package)
 
