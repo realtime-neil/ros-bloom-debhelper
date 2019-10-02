@@ -108,12 +108,9 @@ function(setcap target capabilities)
     execute_process(
       COMMAND \${installed_script}
       RESULT_VARIABLE installed_script_res
-      ERROR_VARIABLE installed_script_err
-      OUTPUT_FILE \${installed_script}.errout
-      ERROR_FILE \${installed_script}.errout
     )
     if(NOT installed_script_res EQUAL 0)
-      message(FATAL_ERROR \"FAILURE: \${installed_script}: \${installed_script_err}\")
+      message(FATAL_ERROR \"FAILURE: \${installed_script}\")
     endif()
     "
   )
