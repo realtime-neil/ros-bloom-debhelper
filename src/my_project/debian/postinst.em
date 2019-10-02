@@ -48,24 +48,6 @@ ends_with() { [ "${1}" != "${1%${2}}" ]; }
 
 case "$1" in
     configure)
-        ######################
-        # CAPABILITIES BEGIN #
-        ######################
-        dpkg -L "@(Package)" | while read path; do
-            if ! [ -x "${path}" ]; then
-                continue
-            fi
-            if ! ends_with "${path}" "-setcap"; then
-                continue
-            fi
-            if ! "${path}"; then
-                die "FAILURE: ${path}"
-            fi
-        done
-        ####################
-        # CAPABILITIES END #
-        ####################
-
         ##############
         # UDEV BEGIN #
         ##############
