@@ -44,12 +44,14 @@ die() {
 
 ends_with() { [ "${1}" != "${1%${2}}" ]; }
 
+################################################################################
+
 case "$1" in
     configure)
         ######################
         # CAPABILITIES BEGIN #
         ######################
-        dpkg -L "#PACKAGE#" | while read path; do
+        dpkg -L "@(Package)" | while read path; do
             if ! [ -x "${path}" ]; then
                 continue
             fi
