@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -eu
+
+readonly this="$(readlink -f "$0")"
+readonly here="$(dirname "${this}")"
+readonly whatami="$(basename "${this}")"
+readonly exepath="${this%-setcap}"
+
+log() { echo "${whatami}: $@" >&2; }
+info() { log "INFO: $@"; }
+warning() { log "WARNING: $@"; }
+error() { log "ERROR: $@"; }
+die() {
+    error "$@"
+    exit 1
+}
+
+################################################################################
+
+if ! [ 0 -eq "$(id -u)" ]; then
+    warning "non-root detected, attempting sudo..."
+    sudo "${this}"
+    exit "$?"
+fi
+
+if [ "${exepath}" = "${this}" ]; then
+    die "bad script name"
+fi
+
+if ! [ -x "${exepath}" ]; then
+    die "missing exepath: ${exepath}"
+fi
+
+if ! setcap @SETCAP_CAPABILITIES@ "${exepath}"; then
+    die "FAILURE: setcap @SETCAP_CAPABILITIES@ ${exepath}"
+fi
+info "SUCCESS: setcap @SETCAP_CAPABILITIES@ ${exepath}"
