@@ -13,13 +13,19 @@ ros-bloom-debhelper
             |-- CMakeLists.txt
             |-- debian
             |   |-- TODO.em
+            |   |-- control.em
             |   |-- cron.daily.em
             |   |-- logrotate.em
+            |   |-- postinst.em
+            |   |-- prerm.em
+            |   |-- rules.em
             |   |-- service.em
             |   `-- udev.em
             |-- etc
             |   `-- rsyslog.d
             |       `-- 99-slug.conf.in
+            |-- launch
+            |   `-- main.launch
             |-- package.xml
             `-- src
                 `-- main.cpp
@@ -53,13 +59,28 @@ ros-bloom-debhelper
     |   `-- udev
     |       `-- rules.d
     |           `-- 60-ros-melodic-my-project.rules
+    |-- opt
+    |   `-- ros
+    |       `-- melodic
+    |           |-- lib
+    |           |   |-- my_project
+    |           |   |   `-- my-project
+    |           |   `-- pkgconfig
+    |           |       `-- my_project.pc
+    |           `-- share
+    |               `-- my_project
+    |                   |-- cmake
+    |                   |   |-- my_projectConfig-version.cmake
+    |                   |   `-- my_projectConfig.cmake
+    |                   |-- launch
+    |                   |   `-- main.launch
+    |                   `-- package.xml
     `-- usr
         `-- share
             `-- doc
                 `-- ros-melodic-my-project
                     |-- TODO.Debian
                     `-- changelog.Debian.gz
-    ...
 
 # What?
 

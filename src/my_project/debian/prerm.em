@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# @(Package) prerm script
+
 # This file is an amalgamation of the following package contents:
 #
 # * dh-make_2.201701_all/usr/share/debhelper/dh_make/debian/prerm.ex
@@ -42,6 +44,12 @@ die() {
     exit 1
 }
 
+################################################################################
+
+#DEBHELPER#
+
+################################################################################
+
 case "$1" in
     remove | upgrade | deconfigure)
         #################
@@ -71,7 +79,5 @@ case "$1" in
         die "unknown argument: \"$1\""
         ;;
 esac
-
-#DEBHELPER#
 
 exit 0

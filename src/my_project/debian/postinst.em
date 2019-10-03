@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# @(Package) postinst script
+
 # This file is an amalgamation of the following package contents:
 #
 # * dh-make_2.201701_all/usr/share/debhelper/dh_make/debian/postinst.ex
@@ -100,6 +102,10 @@ case "$1" in
         ;;
 esac
 
+################################################################################
+
 #DEBHELPER#
+
+################################################################################
 
 exit 0
