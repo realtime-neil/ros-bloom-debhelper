@@ -94,7 +94,7 @@ fi
 
 # The section "Automatically added by dh_installudev" attempts to preserve user
 # changes to udev rules under /etc/udev/rules.d. Bounce udev after that
-if [ "$1" = "configure" ]; then
+if [ "configure" = "$1" ]; then
     if [ -f "/lib/udev/rules.d/60-@(Package).rules" ]; then
         if ischroot; then
             warning "chroot detected, skipping udev bounce"
@@ -113,5 +113,7 @@ fi
 ############
 # UDEV END #
 ############
+
+################################################################################
 
 exit 0
