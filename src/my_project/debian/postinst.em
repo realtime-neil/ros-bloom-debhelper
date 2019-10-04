@@ -116,4 +116,27 @@ fi
 
 ################################################################################
 
+###############
+# LUSER BEGIN #
+###############
+if [ "configure" = "$1" ]; then
+    export LUSERNAME="ros-luser"
+    if ! getent passwd "${LUSERNAME}"; then
+        shell=""
+        if command -v bash >/dev/null 2>&1; then
+            shell="$(command -v bash)"
+        elif command -v zsh >/dev/null 2>&1; then
+            shell="$(command -v zsh)"
+        else
+            shell="$(command -v sh)"
+        fi
+        useradd --create-home --shell "${shell}" "${LUSERNAME}"
+    fi
+fi
+#############
+# LUSER END #
+#############
+
+################################################################################
+
 exit 0
