@@ -46,63 +46,64 @@ die() {
 
 ################################################################################
 
-case "$1" in
-    configure)
-        ##############
-        # UDEV BEGIN #
-        ##############
-        if ischroot; then
-            warning "chroot detected, skipping udev bounce"
-        else
-            if ! udevadm control --reload-rules; then
-                die "FAILURE: udevadm control --reload-rules"
-            fi
-            if ! udevadm trigger; then
-                die "FAILURE: udevadm trigger"
-            fi
-        fi
-        ############
-        # UDEV END #
-        ############
+#################
+# SYSUSER BEGIN #
+#################
 
-        #################
-        # SYSUSER BEGIN #
-        #################
-        export CONF_HOME='/nonexistent'
-        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
-        if ! getent passwd "$CONF_USERNAME"; then
-            emptydir=$(mktemp -d) # to inhibit /etc/skel
-            set -- --system --shell /usr/sbin/nologin
-            # Create home directory for system user, unless it is /nonexistent,
-            # which must stay nonexistent.
-            if [ "${CONF_HOME}" != '/nonexistent' ]; then
-                set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
-            fi
-            useradd $* "${CONF_USERNAME}"
-            rmdir "${emptydir}"
+# The section "Automatically added by dh_systemd_start" (re)starts the
+# service which requires a sysuser. Add the sysuser first.
+if [ "configure" = "$1" ]; then
+    export CONF_HOME='/nonexistent'
+    export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
+    if ! getent passwd "$CONF_USERNAME"; then
+        emptydir=$(mktemp -d) # to inhibit /etc/skel
+        set -- --system --shell /usr/sbin/nologin
+        # Create home directory for system user, unless it is /nonexistent,
+        # which must stay nonexistent.
+        if [ "${CONF_HOME}" != '/nonexistent' ]; then
+            set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
         fi
-        # If user already have another home directory, we use `usermod
-        # --move-home'. Unfortunately, new home is required to be non-existent
-        # (and different from previous), so this conditional is required.
-        if ! [ -d "${CONF_HOME}" ]; then
-            usermod --move-home --home "$CONF_HOME" "$CONF_USERNAME"
-        fi
-        ###############
-        # SYSUSER END #
-        ###############
-        ;;
-    abort-upgrade | abort-remove | abort-deconfigure)
-        info "$1: nothing to do"
-        ;;
-    *)
-        die "unknown argument: \"$1\""
-        ;;
-esac
+        useradd $* "${CONF_USERNAME}"
+        rmdir "${emptydir}"
+    fi
+    # If user already have another home directory, we use `usermod
+    # --move-home'. Unfortunately, new home is required to be non-existent
+    # (and different from previous), so this conditional is required.
+    if ! [ -d "${CONF_HOME}" ]; then
+        usermod --move-home --home "$CONF_HOME" "$CONF_USERNAME"
+    fi
+fi
+
+###############
+# SYSUSER END #
+###############
 
 ################################################################################
 
 #DEBHELPER#
 
 ################################################################################
+
+##############
+# UDEV BEGIN #
+##############
+
+# The section "Automatically added by dh_installudev" attempts to preserve user
+# changes to udev rules under /etc/udev/rules.d. Bounce udev after that
+if [ "$1" = "configure" ]; then
+    if ischroot; then
+        warning "chroot detected, skipping udev bounce"
+    else
+        if ! udevadm control --reload-rules; then
+            die "FAILURE: udevadm control --reload-rules"
+        fi
+        if ! udevadm trigger; then
+            die "FAILURE: udevadm trigger"
+        fi
+    fi
+fi
+############
+# UDEV END #
+############
 
 exit 0
