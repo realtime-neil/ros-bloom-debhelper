@@ -56,15 +56,18 @@ if [ "configure" = "$1" ]; then
     if [ -f "/lib/systemd/system/@(Package).service" ]; then
         export CONF_HOME='/nonexistent'
         export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
-        if ! getent passwd "$CONF_USERNAME"; then
-            emptydir=$(mktemp -d) # to inhibit /etc/skel
-            set -- --system --shell /usr/sbin/nologin
-            # Create home directory for system user, unless it is /nonexistent,
+        if ! getent passwd "${CONF_USERNAME}"; then
+            # Create home directory for system user, unless it is /nonexistent
             # which must stay nonexistent.
+            emptydir="$(mktemp -d)" # to inhibit /etc/skel
             if [ "${CONF_HOME}" != '/nonexistent' ]; then
-                set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
+                useradd --system --shell /usr/sbin/nologin \
+                        --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}" \
+                        "${CONF_USERNAME}"
+            else
+                useradd --system --shell /usr/sbin/nologin \
+                        "${CONF_USERNAME}"
             fi
-            useradd $* "${CONF_USERNAME}"
             rmdir "${emptydir}"
         fi
         # If user already have another home directory, we use `usermod
