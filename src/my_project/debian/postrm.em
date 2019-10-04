@@ -88,7 +88,7 @@ case "$1" in
                     rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
                 fi
                 if ! [ -d "${CONF_HOME}" ]; then
-                    userdel --force "${CONF_USERNAME}"
+                    userdel --force "${CONF_USERNAME}" || true
                 fi
                 ;;
         esac
