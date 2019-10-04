@@ -6,7 +6,7 @@
 # ros-bloom-debhelper/src/my_project/debian/service.em
 
 [Unit]
-Description="@(Description)"
+Description=@(Description)
 After=network.target
 
 [Service]
@@ -35,7 +35,7 @@ After=network.target
 # > Usernames may only be up to 32 characters long.
 #
 # -- man 8 useradd
-User=@(Package[:32])
+User=ros-sysuser
 
 # references:
 # * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities

@@ -35,7 +35,7 @@ set -eu
 readonly this="$(readlink -f "$0")"
 readonly whatami="@(Package).$(basename "${this}")"
 
-log() { echo "${whatami}[$$]: $*" >&2; }
+log() { echo "${whatami}: $*" >&2; }
 error() { log "ERROR: $*"; }
 warning() { log "WARNING: $*"; }
 info() { log "INFO: $*"; }
@@ -71,9 +71,7 @@ case "$1" in
         # SYSUSER BEGIN #
         #################
         export CONF_HOME='/nonexistent'
-        # > Usernames may only be up to 32 characters long.
-        # -- man 8 useradd, "Caveats"
-        export CONF_USERNAME="@(Package[:32])"
+        export CONF_USERNAME="ros-sysuser"
         if ! getent passwd "$CONF_USERNAME"; then
             emptydir=$(mktemp -d) # to inhibit /etc/skel
             set -- --system --shell /usr/sbin/nologin
@@ -95,8 +93,9 @@ case "$1" in
         # SYSUSER END #
         ###############
         ;;
-    abort-upgrade | abort-remove | abort-deconfigure) ;;
-
+    abort-upgrade | abort-remove | abort-deconfigure)
+        info "$1: nothing to do"
+        ;;
     *)
         die "unknown argument: \"$1\""
         ;;
