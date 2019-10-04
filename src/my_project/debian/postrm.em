@@ -56,6 +56,25 @@ die() {
 
 case "$1" in
     purge | remove | upgrade | failed-upgrade | abort-install | abort-upgrade | disappear)
+        #################
+        # SYSUSER BEGIN #
+        #################
+        export CONF_HOME='/nonexistent'
+        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
+        case "$1" in
+            remove | abort-install)
+                if [ -d "${CONF_HOME}" ]; then
+                    rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
+                fi
+                if ! [ -d "${CONF_HOME}" ]; then
+                    userdel --force "${CONF_USERNAME}" || true
+                fi
+                ;;
+        esac
+        ###############
+        # SYSUSER END #
+        ###############
+
         ##############
         # UDEV BEGIN #
         ##############
@@ -76,28 +95,6 @@ case "$1" in
         # UDEV END #
         ############
 
-        #################
-        # SYSUSER BEGIN #
-        #################
-        export CONF_HOME='/nonexistent'
-        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
-        # > Transition from dh-sysuser=1.3. It did not passed mainainer script
-        # > arguments to sysuser-helper.
-        #
-        # -- https://salsa.debian.org/runit-team/dh-sysuser/commit/4ce0c059a9c70f9e41ba2c1a623b4f46a400b12b
-        case "${1:-}" in
-            remove | abort-install)
-                if [ -d "${CONF_HOME}" ]; then
-                    rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
-                fi
-                if ! [ -d "${CONF_HOME}" ]; then
-                    userdel --force "${CONF_USERNAME}" || true
-                fi
-                ;;
-        esac
-        ###############
-        # SYSUSER END #
-        ###############
         ;;
     *)
         die "unknown argument: \"$1\""
