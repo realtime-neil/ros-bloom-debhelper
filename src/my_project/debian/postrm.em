@@ -59,6 +59,9 @@ case "$1" in
         ##############
         # UDEV BEGIN #
         ##############
+
+        # todo: figure out a way to detect if this package has a udev rules
+        # file and if it was removed (necessitating a udev bounce)
         if ischroot; then
             warning "chroot detected, skipping udev bounce"
         else
