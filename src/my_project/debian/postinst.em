@@ -53,24 +53,28 @@ die() {
 # The section "Automatically added by dh_systemd_start" (re)starts the
 # service which requires a sysuser. Add the sysuser first.
 if [ "configure" = "$1" ]; then
-    export CONF_HOME='/nonexistent'
-    export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
-    if ! getent passwd "$CONF_USERNAME"; then
-        emptydir=$(mktemp -d) # to inhibit /etc/skel
-        set -- --system --shell /usr/sbin/nologin
-        # Create home directory for system user, unless it is /nonexistent,
-        # which must stay nonexistent.
-        if [ "${CONF_HOME}" != '/nonexistent' ]; then
-            set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
+    if [ -f "/lib/systemd/system/@(Package).service" ]; then
+        export CONF_HOME='/nonexistent'
+        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
+        if ! getent passwd "$CONF_USERNAME"; then
+            emptydir=$(mktemp -d) # to inhibit /etc/skel
+            set -- --system --shell /usr/sbin/nologin
+            # Create home directory for system user, unless it is /nonexistent,
+            # which must stay nonexistent.
+            if [ "${CONF_HOME}" != '/nonexistent' ]; then
+                set -- "$*" --create-home --skel "${emptydir}" --home-dir "${CONF_HOME}"
+            fi
+            useradd $* "${CONF_USERNAME}"
+            rmdir "${emptydir}"
         fi
-        useradd $* "${CONF_USERNAME}"
-        rmdir "${emptydir}"
-    fi
-    # If user already have another home directory, we use `usermod
-    # --move-home'. Unfortunately, new home is required to be non-existent
-    # (and different from previous), so this conditional is required.
-    if ! [ -d "${CONF_HOME}" ]; then
-        usermod --move-home --home "$CONF_HOME" "$CONF_USERNAME"
+        # If user already have another home directory, we use `usermod
+        # --move-home'. Unfortunately, new home is required to be non-existent
+        # (and different from previous), so this conditional is required.
+        if ! [ -d "${CONF_HOME}" ]; then
+            usermod --move-home --home "$CONF_HOME" "$CONF_USERNAME"
+        fi
+    else
+        info "no service unit; skipping sysuser creation"
     fi
 fi
 
@@ -91,15 +95,19 @@ fi
 # The section "Automatically added by dh_installudev" attempts to preserve user
 # changes to udev rules under /etc/udev/rules.d. Bounce udev after that
 if [ "$1" = "configure" ]; then
-    if ischroot; then
-        warning "chroot detected, skipping udev bounce"
+    if [ -f "/lib/udev/rules.d/60-@(Package).rules" ]; then
+        if ischroot; then
+            warning "chroot detected, skipping udev bounce"
+        else
+            if ! udevadm control --reload-rules; then
+                die "FAILURE: udevadm control --reload-rules"
+            fi
+            if ! udevadm trigger; then
+                die "FAILURE: udevadm trigger"
+            fi
+        fi
     else
-        if ! udevadm control --reload-rules; then
-            die "FAILURE: udevadm control --reload-rules"
-        fi
-        if ! udevadm trigger; then
-            die "FAILURE: udevadm trigger"
-        fi
+        info "no udev rules; skipping udev bounce"
     fi
 fi
 ############
