@@ -17,7 +17,7 @@ ros-bloom-debhelper
             |   |-- cron.daily.em
             |   |-- logrotate.em
             |   |-- postinst.em
-            |   |-- prerm.em
+            |   |-- postrm.em
             |   |-- rules.em
             |   |-- service.em
             |   `-- udev.em
