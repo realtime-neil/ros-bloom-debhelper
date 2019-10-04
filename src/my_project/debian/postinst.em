@@ -71,7 +71,7 @@ case "$1" in
         # SYSUSER BEGIN #
         #################
         export CONF_HOME='/nonexistent'
-        export CONF_USERNAME="ros-sysuser"
+        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
         if ! getent passwd "$CONF_USERNAME"; then
             emptydir=$(mktemp -d) # to inhibit /etc/skel
             set -- --system --shell /usr/sbin/nologin

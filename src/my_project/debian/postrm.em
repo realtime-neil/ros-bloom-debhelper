@@ -77,7 +77,7 @@ case "$1" in
         # SYSUSER BEGIN #
         #################
         export CONF_HOME='/nonexistent'
-        export CONF_USERNAME="ros-sysuser"
+        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
         # > Transition from dh-sysuser=1.3. It did not passed mainainer script
         # > arguments to sysuser-helper.
         #

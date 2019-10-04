@@ -35,7 +35,7 @@ After=network.target
 # > Usernames may only be up to 32 characters long.
 #
 # -- man 8 useradd
-User=ros-sysuser
+User=@('-'.join(Package.split('-')[2:])[:32])
 
 # references:
 # * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities
