@@ -33,7 +33,7 @@
 set -eu
 
 readonly this="$(readlink -f "$0")"
-readonly whatami="@(Package).$(basename "${this}")"
+readonly whatami="$(basename "${this}")"
 
 readonly systemd_service_file="/lib/systemd/system/@(Package).service"
 readonly sysuser_name="@('-'.join(Package.split('-')[2:])[:32])"
