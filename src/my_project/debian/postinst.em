@@ -32,7 +32,16 @@
 
 set -eu
 
-readonly package=#PACKAGE#
+# Use a command substitution on a heredoc because `dh_installdeb` apparently
+# only substitutes a #TOKEN# at the beginning of a line
+#
+# -- https://manpages.debian.org/buster/debhelper/dh_installdeb.1.en.html
+readonly package=$(
+    cat <<EOF
+#PACKAGE#
+EOF
+)
+
 readonly this="$(readlink -f "$0")"
 readonly whatami="@(Package).$(basename "${this}")"
 
@@ -69,11 +78,11 @@ if [ "configure" = "$1" ]; then
             emptydir="$(mktemp -d)" # to inhibit /etc/skel
             if [ "/nonexistent" = "${sysuser_home}" ]; then
                 useradd --system --shell /usr/sbin/nologin \
-                        "${sysuser_name}"
+                    "${sysuser_name}"
             else
                 useradd --system --shell /usr/sbin/nologin \
-                        --create-home --skel "${emptydir}" --home-dir "${sysuser_home}" \
-                        "${sysuser_name}"
+                    --create-home --skel "${emptydir}" --home-dir "${sysuser_home}" \
+                    "${sysuser_name}"
             fi
             rmdir "${emptydir}"
             info "created sysuser: $(getent passwd "${sysuser_name}")"
