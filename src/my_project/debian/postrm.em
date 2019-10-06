@@ -36,16 +36,6 @@
 
 set -eu
 
-# Use a command substitution on a heredoc because `dh_installdeb` apparently
-# only substitutes a #TOKEN# at the beginning of a line
-#
-# -- https://manpages.debian.org/buster/debhelper/dh_installdeb.1.en.html
-readonly package=$(
-    cat <<EOF
-#PACKAGE#
-EOF
-)
-
 readonly this="$(readlink -f "$0")"
 readonly whatami="@(Package).$(basename "${this}")"
 
