@@ -36,7 +36,7 @@
 
 set -eu
 
-readonly package="#PACKAGE#"
+readonly package=#PACKAGE#
 readonly this="$(readlink -f "$0")"
 readonly whatami="@(Package).$(basename "${this}")"
 
