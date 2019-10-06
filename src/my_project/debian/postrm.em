@@ -36,8 +36,14 @@
 
 set -eu
 
+readonly package="#PACKAGE#"
 readonly this="$(readlink -f "$0")"
 readonly whatami="@(Package).$(basename "${this}")"
+
+readonly systemd_service_file="/lib/systemd/system/@(Package).service"
+readonly sysuser_name="@('-'.join(Package.split('-')[2:])[:32])"
+readonly sysuser_home="/nonexistent"
+readonly udev_rules_file="/lib/udev/rules.d/60-@(Package).rules"
 
 log() { echo "${whatami}: $*" >&2; }
 error() { log "ERROR: $*"; }
@@ -59,15 +65,15 @@ case "$1" in
         #################
         # SYSUSER BEGIN #
         #################
-        export CONF_HOME='/nonexistent'
-        export CONF_USERNAME="@('-'.join(Package.split('-')[2:])[:32])"
         case "$1" in
             remove | abort-install)
-                if [ -d "${CONF_HOME}" ]; then
-                    rmdir --ignore-fail-on-non-empty "${CONF_HOME}"
+                if [ -d "${sysuser_home}" ]; then
+                    info "deleting sysuser home: ${sysuser_home}"
+                    rmdir --ignore-fail-on-non-empty "${sysuser_home}"
                 fi
-                if ! [ -d "${CONF_HOME}" ]; then
-                    userdel --force "${CONF_USERNAME}" || true
+                if ! [ -d "${sysuser_home}" ]; then
+                    info "deleting sysuser: ${sysuser_name}"
+                    userdel --force "${sysuser_name}" || true
                 fi
                 ;;
         esac
