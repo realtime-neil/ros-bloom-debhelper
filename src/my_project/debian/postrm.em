@@ -39,9 +39,6 @@ set -eu
 readonly this="$(readlink -f "$0")"
 readonly whatami="$(basename "${this}")"
 
-readonly this="$(readlink -f "$0")"
-readonly whatami="$(basename "${this}")"
-
 readonly package="@(Package)"
 readonly systemd_service_file="/lib/systemd/system/${package}.service"
 readonly sysuser_name="$(echo "${package}" | cut -d- -f3- | head -c32)"
