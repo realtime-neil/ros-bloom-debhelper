@@ -84,18 +84,18 @@ case "$1" in
         ##############
         # UDEV BEGIN #
         ##############
-
-        # todo: figure out a way to detect if this package has a udev rules
-        # file and if it was removed (necessitating a udev bounce)
         if ischroot; then
             warning "chroot detected, skipping udev bounce"
         else
+            # todo: figure out a way to detect if this package has a udev rules
+            # file and if it was removed (necessitating a udev bounce)
             if ! udevadm control --reload-rules; then
                 die "FAILURE: udevadm control --reload-rules"
             fi
             if ! udevadm trigger; then
                 die "FAILURE: udevadm trigger"
             fi
+            info "udev bounced"
         fi
         ############
         # UDEV END #
