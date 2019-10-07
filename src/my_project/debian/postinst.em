@@ -35,10 +35,11 @@ set -eu
 readonly this="$(readlink -f "$0")"
 readonly whatami="$(basename "${this}")"
 
-readonly systemd_service_file="/lib/systemd/system/@(Package).service"
-readonly sysuser_name="@('-'.join(Package.split('-')[2:])[:32])"
+readonly package="@(Package)"
+readonly systemd_service_file="/lib/systemd/system/${package}.service"
+readonly sysuser_name="$(echo "${package}" | cut -d- -f3- | head -c32)"
 readonly sysuser_home="/nonexistent"
-readonly udev_rules_file="/lib/udev/rules.d/60-@(Package).rules"
+readonly udev_rules_file="/lib/udev/rules.d/60-${package}.rules"
 
 log() { echo "${whatami}: $*" >&2; }
 error() { log "ERROR: $*"; }
@@ -125,29 +126,6 @@ fi
 ############
 # UDEV END #
 ############
-
-################################################################################
-
-###############
-# LUSER BEGIN #
-###############
-if [ "configure" = "$1" ]; then
-    export LUSERNAME="ros-luser"
-    if ! getent passwd "${LUSERNAME}"; then
-        shell=""
-        if command -v bash >/dev/null 2>&1; then
-            shell="$(command -v bash)"
-        elif command -v zsh >/dev/null 2>&1; then
-            shell="$(command -v zsh)"
-        else
-            shell="$(command -v sh)"
-        fi
-        useradd --create-home --shell "${shell}" "${LUSERNAME}"
-    fi
-fi
-#############
-# LUSER END #
-#############
 
 ################################################################################
 

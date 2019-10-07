@@ -39,10 +39,14 @@ set -eu
 readonly this="$(readlink -f "$0")"
 readonly whatami="$(basename "${this}")"
 
-readonly systemd_service_file="/lib/systemd/system/@(Package).service"
-readonly sysuser_name="@('-'.join(Package.split('-')[2:])[:32])"
+readonly this="$(readlink -f "$0")"
+readonly whatami="$(basename "${this}")"
+
+readonly package="@(Package)"
+readonly systemd_service_file="/lib/systemd/system/${package}.service"
+readonly sysuser_name="$(echo "${package}" | cut -d- -f3- | head -c32)"
 readonly sysuser_home="/nonexistent"
-readonly udev_rules_file="/lib/udev/rules.d/60-@(Package).rules"
+readonly udev_rules_file="/lib/udev/rules.d/60-${package}.rules"
 
 log() { echo "${whatami}: $*" >&2; }
 error() { log "ERROR: $*"; }
