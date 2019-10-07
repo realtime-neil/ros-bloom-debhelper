@@ -40,8 +40,9 @@ readonly this="$(readlink -f "$0")"
 readonly whatami="$(basename "${this}")"
 
 readonly package="@(Package)"
+readonly project="@(Name)"
 readonly systemd_service_file="/lib/systemd/system/${package}.service"
-readonly sysuser_name="$(echo "${package}" | cut -d- -f3- | head -c32)"
+readonly sysuser_name="$(echo "${project}" | cut -c-32)"
 readonly sysuser_home="/nonexistent"
 readonly udev_rules_file="/lib/udev/rules.d/60-${package}.rules"
 

@@ -35,7 +35,7 @@ After=network.target
 # > Usernames may only be up to 32 characters long.
 #
 # -- man 8 useradd
-User=@('-'.join(Package.split('-')[2:])[:32])
+User=@(Name[:32])
 
 # references:
 # * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities
@@ -44,28 +44,28 @@ CapabilityBoundingSet=CAP_SYS_NICE
 AmbientCapabilities=CAP_SYS_NICE
 
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
-RuntimeDirectory=@(Package)
+RuntimeDirectory=@(Name)
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
 # export the RUNTIME_DIRECTORY env var, so we have to do this:
-Environment=RUNTIME_DIRECTORY=/run/@(Package)
+Environment=RUNTIME_DIRECTORY=/run/@(Name)
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
 # have any of the following:
 #
-#StateDirectory=@(Package)
-#CacheDirectory=@(Package)
-#LogsDirectory=@(Package)
-#ConfigurationDirectory=@(Package)
+#StateDirectory=@(Name)
+#CacheDirectory=@(Name)
+#LogsDirectory=@(Name)
+#ConfigurationDirectory=@(Name)
 #
 # ...so fake it:
 
 PermissionsStartOnly=true
 
-Environment=STATE_DIRECTORY=/var/lib/@(Package)
-Environment=CACHE_DIRECTORY=/var/cache/@(Package)
-Environment=LOGS_DIRECTORY=/var/log/@(Package)
-Environment=CONFIGURATION_DIRECTORY=/etc/@(Package)
+Environment=STATE_DIRECTORY=/var/lib/@(Name)
+Environment=CACHE_DIRECTORY=/var/cache/@(Name)
+Environment=LOGS_DIRECTORY=/var/log/@(Name)
+Environment=CONFIGURATION_DIRECTORY=/etc/@(Name)
 
 ExecStartPre=/bin/sh -c 'mkdir -vp ${STATE_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'mkdir -vp ${CACHE_DIRECTORY}'
@@ -91,7 +91,7 @@ ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 # "node", you presumptive fscks) from rendering your rootfs unbootable.
 Environment=ROS_HOME=/tmp/@(Package)
 ExecStartPre=/bin/sh -c 'rm -rf ${ROS_HOME}'
-ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch my_project main.launch'
+ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch @(Name) main.launch'
 ExecStopPost=/bin/sh -c 'rm -rf ${ROS_HOME}'
 
 [Install]
