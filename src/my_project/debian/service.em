@@ -84,13 +84,20 @@ ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 # Table of Approximal Associations for ficticious Name "foo"
 # | systemd                  | xdg                      | gnu
 # +----------------------------------------------------------------------------+
-# | $RUNTIME_DIRECTORY       | $XDG_RUNTIME_DIR/foo     | $runstatedir/foo
+# | $RUNTIME_DIRECTORY       | $XDG_RUNTIME_DIR/foo     | $localstatedir/run/foo
 # | $STATE_DIRECTORY         | $XDG_CONFIG_HOME/foo     | $localstatedir/lib/foo
-# | $CACHE_DIRECTORY         | $XDG_CACHE_HOME/foo      | $runstatedir/foo
+# | $CACHE_DIRECTORY         | $XDG_CACHE_HOME/foo      | $localstatedir/cache/foo
 # | $LOGS_DIRECTORY          | $XDG_CONFIG_HOME/log/foo | $localstatedir/log/foo
 # | $CONFIGURATION_DIRECTORY | $XDG_CONFIG_HOME/foo     | $sysconfdir/foo
 
-Environment=@(Name.upper())_RUNTIME_DIR=/run/lib/@(Name)
+# RUNSTATEDIR was added to GNUInstallDirs in cmake v3.9
+#
+# > RUNSTATEDIR: run-time variable data (LOCALSTATEDIR/run)
+#
+# -- https://cmake.org/cmake/help/v3.9/module/GNUInstallDirs.html
+
+# This is okay because Ubuntu has symlink /var/run -> /run
+Environment=@(Name.upper())_RUNTIME_DIR=/var/run/@(Name)
 Environment=@(Name.upper())_STATE_DIR=/var/lib/@(Name)
 Environment=@(Name.upper())_CACHE_DIR=/var/cache/@(Name)
 Environment=@(Name.upper())_LOGS_DIR=/var/log/@(Name)

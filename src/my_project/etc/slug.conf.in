@@ -3,14 +3,25 @@
 # Table of Approximal Associations for ficticious Name "foo"
 # | systemd            | xdg                       | gnu       
 # +----------------------------------------------------------------------------+
-# | $RUNTIME_DIRECTORY       | $XDG_RUNTIME_DIR/foo     | $runstatedir/foo
+# | $RUNTIME_DIRECTORY       | $XDG_RUNTIME_DIR/foo     | $localstatedir/run/foo
 # | $STATE_DIRECTORY         | $XDG_CONFIG_HOME/foo     | $localstatedir/lib/foo
-# | $CACHE_DIRECTORY         | $XDG_CACHE_HOME/foo      | $runstatedir/foo
+# | $CACHE_DIRECTORY         | $XDG_CACHE_HOME/foo      | $localstatedir/cache/foo
 # | $LOGS_DIRECTORY          | $XDG_CONFIG_HOME/log/foo | $localstatedir/log/foo
 # | $CONFIGURATION_DIRECTORY | $XDG_CONFIG_HOME/foo     | $sysconfdir/foo
 
-runtime_dir = @CMAKE_INSTALL_FULL_RUNSTATEDIR@/@PROJECT_NAME@
+# RUNSTATEDIR was added to GNUInstallDirs in cmake v3.9
+#
+# > RUNSTATEDIR: run-time variable data (LOCALSTATEDIR/run)
+#
+# -- https://cmake.org/cmake/help/v3.9/module/GNUInstallDirs.html
+
+# This is okay because Ubuntu has symlink /var/run -> /run
+runtime_dir = @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/run/@PROJECT_NAME@
+
 state_dir   = @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/lib/@PROJECT_NAME@
-cache_dir   = @CMAKE_INSTALL_FULL_RUNSTATEDIR@/@PROJECT_NAME@
+
+cache_dir   = @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/cache/@PROJECT_NAME@
+
 logs_dir    = @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/log/@PROJECT_NAME@
+
 config_dir  = @CMAKE_INSTALL_FULL_SYSCONFDIR@/@PROJECT_NAME@

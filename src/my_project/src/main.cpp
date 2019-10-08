@@ -7,9 +7,7 @@
 #include <iostream>
 #include <thread>
 
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/program_options.hpp>
 
@@ -41,15 +39,71 @@ std::string _to_string(T v) {
 #define SPIT(_) /**/
 #endif
 
+#define SPIT_ENVVAR(STRLIT)                                                                       \
+  do {                                                                                            \
+    std::cerr << STRLIT "=\"" << std::string(std::getenv(STRLIT) ? std::getenv(STRLIT) : "") "\"" \
+              << std::endl;                                                                       \
+  } while (0) /**/
+
+namespace {
+inline bool _exists(std::string const& path) {
+  std::ifstream ifs(path);
+  return ifs.good();
+}
+
+std::string find_config_file() {
+  // https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
+  char* gotenv = nullptr;
+  std::string res;
+  if ((gotenv = std::getenv("XDG_CONFIG_HOME"))) {
+    res = std::string(gotenv) + "/" CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf";
+    if (_exists(res)) {
+      return res;
+    }
+  }
+  if ((gotenv = std::getenv("HOME"))) {
+    res = std::string(gotenv) + "/.config/" CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf";
+    if (_exists(res)) {
+      return res;
+    }
+  }
+  if ((gotenv = std::getenv("XDG_CONFIG_DIRS"))) {
+    std::string const xdg_config_dirs(gotenv);
+    std::vector<std::string> splat;
+    boost::split(splat, xdg_config_dirs, boost::is_any_of(":"));
+    for (std::string each : splat) {
+      res = each + "/" CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf";
+      if (_exists(res)) {
+        return res;
+      }
+    }
+  }
+  // I'm not going to do the following because it's too weird:
+  //
+  // > If $XDG_CONFIG_DIRS is either not set or empty, a value equal to
+  // > /etc/xdg should be used.
+  //
+  // -- https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
+  res = "/etc/" CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf";
+  if (_exists(res)) {
+    return res;
+  }
+  // failed to find config file
+  return "";
+}
+}
+
 int main(int argc, char** argv) {
   std::cerr << "Hello, " << CMAKE_PROJECT_NAME << "!" << std::endl;
 
   std::string config_file;
-  std::string runtime_dir;
-  std::string state_dir;
-  std::string cache_dir;
-  std::string logs_dir;
-  std::string config_dir;
+
+  // initialize defaults
+  std::string runtime_dir = "" CMAKE_INSTALL_FULL_LOCALSTATEDIR "/run/" CMAKE_PROJECT_NAME;  //
+  std::string state_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/lib/" CMAKE_PROJECT_NAME;       //
+  std::string logs_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/log/" CMAKE_PROJECT_NAME;        //
+  std::string cache_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/cache/" CMAKE_PROJECT_NAME;     //
+  std::string config_dir(CMAKE_INSTALL_FULL_SYSCONFDIR "/" CMAKE_PROJECT_NAME);              //
 
   {
     ///////////////////////////
@@ -83,11 +137,11 @@ int main(int argc, char** argv) {
       std::cout << desc_cmdline << std::endl;
       return EXIT_SUCCESS;
     }
-#define SPIT_OPTION(STRLIT, VAR)                                    \
-  do {                                                              \
-    if (vm.count((STRLIT))) {                                       \
-      std::cerr << (STRLIT) << "=\"" << (VAR) << "\"" << std::endl; \
-    }                                                               \
+#define SPIT_OPTION(STRLIT, VAR)                                            \
+  do {                                                                      \
+    if (vm.count((STRLIT))) {                                               \
+      std::cerr << "  " << (STRLIT) << "=\"" << (VAR) << "\"" << std::endl; \
+    }                                                                       \
   } while (0) /**/
 
     std::cerr << "after parsing command line:" << std::endl;
@@ -126,12 +180,34 @@ int main(int argc, char** argv) {
       SPIT_OPTION("cache_dir", cache_dir);
       SPIT_OPTION("logs_dir", logs_dir);
       SPIT_OPTION("config_dir", config_dir);
-    } else if (true) {
-      // todo: go looking for config files
-    } else {
-      // todo: use defaults
-    }
+    } else if (!((config_file = find_config_file()).empty())) {
+      // found config file
+      std::ifstream ifs(config_file);
+      if (!ifs) {
+        std::cerr << "cannot open config file: " << config_file << std::endl;
+        return EXIT_FAILURE;
+      }
+      std::cerr << "parsing config file \"" << config_file << "\"..." << std::endl;
+      po::store(parse_config_file(ifs, desc_envconf), vm);
+      po::notify(vm);
+      std::cerr << "parsed config file \"" << config_file << "\":" << std::endl;
+      SPIT_OPTION("runtime_dir", runtime_dir);
+      SPIT_OPTION("state_dir", state_dir);
+      SPIT_OPTION("cache_dir", cache_dir);
+      SPIT_OPTION("logs_dir", logs_dir);
+      SPIT_OPTION("config_dir", config_dir);
 #undef SPIT_OPTION
+    } else {
+      // print defaults
+      std::cerr                                                       //
+          << "using defaults:" << std::endl                           //
+          << "  runtime_dir: \"" << runtime_dir << "\"" << std::endl  //
+          << "  state_dir: \"" << state_dir << "\"" << std::endl      //
+          << "  cache_dir: \"" << cache_dir << "\"" << std::endl      //
+          << "  logs_dir: \"" << logs_dir << "\"" << std::endl        //
+          << "  config_dir: \"" << config_dir << "\"" << std::endl    //
+          ;
+    }
     /////////////////////////
     // PROGRAM OPTIONS END //
     /////////////////////////
