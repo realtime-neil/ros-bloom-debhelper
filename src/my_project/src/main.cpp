@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
   std::string state_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/lib/" CMAKE_PROJECT_NAME;       //
   std::string logs_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/log/" CMAKE_PROJECT_NAME;        //
   std::string cache_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/cache/" CMAKE_PROJECT_NAME;     //
-  std::string config_dir(CMAKE_INSTALL_FULL_SYSCONFDIR "/" CMAKE_PROJECT_NAME);              //
+  std::string config_dir = CMAKE_INSTALL_FULL_SYSCONFDIR "/" CMAKE_PROJECT_NAME;             //
 
   {
     ///////////////////////////
