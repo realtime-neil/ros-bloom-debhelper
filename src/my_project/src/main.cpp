@@ -51,86 +51,91 @@ int main(int argc, char** argv) {
   std::string logs_dir;
   std::string config_dir;
 
-  namespace po = ::boost::program_options;
+  {
+    ///////////////////////////
+    // PROGRAM OPTIONS BEGIN //
+    ///////////////////////////
+    namespace po = ::boost::program_options;
+    po::variables_map vm;
+    po::options_description desc_cmdline(std::string(argv[0]) + " options");
+    desc_cmdline.add_options()                                                      //
+        ("help,h", "print help and return success")                                 //
+        ("version", "print version and return success")                             //
+        ("config-file,c", po::value<std::string>(&config_file), "config file")      //
+        ("runtime-dir", po::value<std::string>(&runtime_dir), "runtime directory")  //
+        ("state-dir", po::value<std::string>(&state_dir), "state directory")        //
+        ("cache-dir", po::value<std::string>(&cache_dir), "cache directory")        //
+        ("logs-dir", po::value<std::string>(&logs_dir), "logs directory")           //
+        ("config-dir", po::value<std::string>(&config_dir), "config directory")     //
+        ;
 
-  po::variables_map vm;
-
-  po::options_description desc_cmdline(std::string(argv[0]) + " options");
-  desc_cmdline.add_options()                                                      //
-      ("help,h", "print help and return success")                                 //
-      ("version", "print version and return success")                             //
-      ("config-file,c", po::value<std::string>(&config_file), "config file")      //
-      ("runtime-dir", po::value<std::string>(&runtime_dir), "runtime directory")  //
-      ("state-dir", po::value<std::string>(&state_dir), "state directory")        //
-      ("cache-dir", po::value<std::string>(&cache_dir), "cache directory")        //
-      ("logs-dir", po::value<std::string>(&logs_dir), "logs directory")           //
-      ("config-dir", po::value<std::string>(&config_dir), "config directory")     //
-      ;
-
-  po::options_description desc_envconf("Environment and config file options");
-  desc_envconf.add_options()                                                      //
-      ("runtime_dir", po::value<std::string>(&runtime_dir), "runtime directory")  //
-      ("state_dir", po::value<std::string>(&state_dir), "state directory")        //
-      ("cache_dir", po::value<std::string>(&cache_dir), "cache directory")        //
-      ("logs_dir", po::value<std::string>(&logs_dir), "logs directory")           //
-      ("config_dir", po::value<std::string>(&config_dir), "config directory")     //
-      ;
-
-  po::store(po::parse_command_line(argc, argv, desc_cmdline), vm);
-  po::notify(vm);
-  if (vm.count("help")) {
-    std::cout << desc_cmdline << std::endl;
-    return EXIT_SUCCESS;
-  }
-
-#define SPIT_OPTION(STRLIT, VAR)                          \
-  do {                                                    \
-    if (vm.count((STRLIT))) {                             \
-      std::cerr << (STRLIT) << "=" << (VAR) << std::endl; \
-    }                                                     \
+    po::options_description desc_envconf("environment and config file options");
+    desc_envconf.add_options()                                                      //
+        ("runtime_dir", po::value<std::string>(&runtime_dir), "runtime directory")  //
+        ("state_dir", po::value<std::string>(&state_dir), "state directory")        //
+        ("cache_dir", po::value<std::string>(&cache_dir), "cache directory")        //
+        ("logs_dir", po::value<std::string>(&logs_dir), "logs directory")           //
+        ("config_dir", po::value<std::string>(&config_dir), "config directory")     //
+        ;
+    po::store(po::parse_command_line(argc, argv, desc_cmdline), vm);
+    po::notify(vm);
+    if (vm.count("help")) {
+      std::cout << desc_cmdline << std::endl;
+      return EXIT_SUCCESS;
+    }
+#define SPIT_OPTION(STRLIT, VAR)                                    \
+  do {                                                              \
+    if (vm.count((STRLIT))) {                                       \
+      std::cerr << (STRLIT) << "=\"" << (VAR) << "\"" << std::endl; \
+    }                                                               \
   } while (0) /**/
 
-  std::cerr << "after parsing command line:" << std::endl;
-  SPIT_OPTION("config-file", config_file);
-  SPIT_OPTION("runtime-dir", runtime_dir);
-  SPIT_OPTION("state-dir", state_dir);
-  SPIT_OPTION("cache-dir", cache_dir);
-  SPIT_OPTION("logs-dir", logs_dir);
-  SPIT_OPTION("config-dir", config_dir);
+    std::cerr << "after parsing command line:" << std::endl;
+    SPIT_OPTION("config-file", config_file);
+    SPIT_OPTION("runtime-dir", runtime_dir);
+    SPIT_OPTION("state-dir", state_dir);
+    SPIT_OPTION("cache-dir", cache_dir);
+    SPIT_OPTION("logs-dir", logs_dir);
+    SPIT_OPTION("config-dir", config_dir);
 
-  std::cerr << "parsing environment..." << std::endl;
-  po::store(po::parse_environment(desc_envconf,
-                                  boost::to_upper_copy(std::string(CMAKE_PROJECT_NAME "_"))),
-            vm);
-  po::notify(vm);
-  std::cerr << "parsed environment:" << std::endl;
-  SPIT_OPTION("runtime_dir", runtime_dir);
-  SPIT_OPTION("state_dir", state_dir);
-  SPIT_OPTION("cache_dir", cache_dir);
-  SPIT_OPTION("logs_dir", logs_dir);
-  SPIT_OPTION("config_dir", config_dir);
-
-  if (vm.count("config-file")) {
-    SPIT(config_file);
-    std::ifstream ifs(config_file);
-    if (!ifs) {
-      std::cerr << "cannot open config file: " << config_file << std::endl;
-      return EXIT_FAILURE;
-    }
-    std::cerr << "parsing config file \"" << config_file << "\"..." << std::endl;
-    po::store(parse_config_file(ifs, desc_envconf), vm);
+    std::cerr << "parsing environment..." << std::endl;
+    po::store(po::parse_environment(desc_envconf,
+                                    boost::to_upper_copy(std::string(CMAKE_PROJECT_NAME "_"))),
+              vm);
     po::notify(vm);
-    std::cerr << "parsed config file \"" << config_file << "\":" << std::endl;
+    std::cerr << "parsed environment:" << std::endl;
     SPIT_OPTION("runtime_dir", runtime_dir);
     SPIT_OPTION("state_dir", state_dir);
     SPIT_OPTION("cache_dir", cache_dir);
     SPIT_OPTION("logs_dir", logs_dir);
     SPIT_OPTION("config_dir", config_dir);
+
+    if (vm.count("config-file")) {
+      SPIT(config_file);
+      std::ifstream ifs(config_file);
+      if (!ifs) {
+        std::cerr << "cannot open config file: " << config_file << std::endl;
+        return EXIT_FAILURE;
+      }
+      std::cerr << "parsing config file \"" << config_file << "\"..." << std::endl;
+      po::store(parse_config_file(ifs, desc_envconf), vm);
+      po::notify(vm);
+      std::cerr << "parsed config file \"" << config_file << "\":" << std::endl;
+      SPIT_OPTION("runtime_dir", runtime_dir);
+      SPIT_OPTION("state_dir", state_dir);
+      SPIT_OPTION("cache_dir", cache_dir);
+      SPIT_OPTION("logs_dir", logs_dir);
+      SPIT_OPTION("config_dir", config_dir);
+    } else if (true) {
+      // todo: go looking for config files
+    } else {
+      // todo: use defaults
+    }
+#undef SPIT_OPTION
+    /////////////////////////
+    // PROGRAM OPTIONS END //
+    /////////////////////////
   }
-
-  // todo: go looking for config files
-
-  // todo: use defaults
 
   int res = -1;
   errno = 0;
