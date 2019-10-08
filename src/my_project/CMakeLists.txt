@@ -15,14 +15,13 @@ find_package(catkin REQUIRED COMPONENTS)
 # https://github.com/ros/cmake_modules
 find_package(cmake_modules REQUIRED)
 
+find_package(Boost REQUIRED COMPONENTS program_options)
+
 catkin_package(
   CATKIN_DEPENDS
   DEPENDS
+    Boost
 )
-
-# because underscores in an executable basename look weird
-string(REPLACE "_" "-" EXE_NAME "${PROJECT_NAME}")
-add_executable(${EXE_NAME} src/main.cpp)
 
 # because ROS_DISTRO is an env var, not (yet) a cmake var
 if ("" STREQUAL "$ENV{ROS_DISTRO}")
@@ -32,6 +31,38 @@ set(ROS_DISTRO "$ENV{ROS_DISTRO}")
 
 # because it's handy to have the debian package name
 string(REPLACE "_" "-" PACKAGE_NAME "ros-${ROS_DISTRO}-${PROJECT_NAME}")
+
+# autoconf-style config header; because config- and build-time cmake variables
+# are nice to have as preprocessor definitions
+configure_file(config.h.in config.h @ONLY)
+
+include_directories(
+  # > A relative path is treated with respect to the value of
+  # > CMAKE_CURRENT_BINARY_DIR. If the path names an existing directory the
+  # > output file is placed in that directory with the same file name as the
+  # > input file.
+  #
+  # -- https://cmake.org/cmake/help/latest/command/configure_file.html
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+include_directories(SYSTEM ${boost_INCLUDE_DIR})
+
+# because underscores in an executable basename look weird
+string(REPLACE "_" "-" EXE_NAME "${PROJECT_NAME}")
+add_executable(${EXE_NAME} src/main.cpp)
+target_link_libraries(${EXE_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+
+# project config file
+configure_file(
+  etc/slug.conf.in
+  etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
+  @ONLY
+)
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
+  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/${PROJECT_NAME}
+)
 
 # rsyslog filter rule - because debhelper can't do this (yet)
 configure_file(
@@ -65,3 +96,12 @@ install(
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+# this is for cmake variable hunting
+if (TRUE)
+  get_cmake_property(_variableNames VARIABLES)
+  list (SORT _variableNames)
+  foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}==${${_variableName}}")
+  endforeach()
+endif()

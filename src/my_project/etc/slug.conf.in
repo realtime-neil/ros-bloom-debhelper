@@ -1,0 +1,16 @@
+# @CMAKE_INSTALL_FULL_SYSCONFDIR@/@PROJECT_NAME@/@PROJECT_NAME@.conf
+
+# Table of Approximal Associations for ficticious Name "foo"
+# | systemd            | xdg                       | gnu       
+# +----------------------------------------------------------------------------+
+# | $RUNTIME_DIRECTORY       | $XDG_RUNTIME_DIR/foo     | $runstatedir/foo
+# | $STATE_DIRECTORY         | $XDG_CONFIG_HOME/foo     | $localstatedir/lib/foo
+# | $CACHE_DIRECTORY         | $XDG_CACHE_HOME/foo      | $runstatedir/foo
+# | $LOGS_DIRECTORY          | $XDG_CONFIG_HOME/log/foo | $localstatedir/log/foo
+# | $CONFIGURATION_DIRECTORY | $XDG_CONFIG_HOME/foo     | $sysconfdir/foo
+
+runtime_dir = @CMAKE_INSTALL_FULL_RUNSTATEDIR@/@PROJECT_NAME@
+state_dir   = @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/lib/@PROJECT_NAME@
+cache_dir   = @CMAKE_INSTALL_FULL_RUNSTATEDIR@/@PROJECT_NAME@
+logs_dir    = @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/log/@PROJECT_NAME@
+config_dir  = @CMAKE_INSTALL_FULL_SYSCONFDIR@/@PROJECT_NAME@

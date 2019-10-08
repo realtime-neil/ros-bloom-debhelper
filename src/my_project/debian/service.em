@@ -71,6 +71,31 @@ ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CACHE_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${LOGS_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 
+# We need to adapt "The Big Five" env vars into forms that can be easily parsed
+# by boost program options; i.e., with a $PROJECT prefix. What's more, we need
+# to split the difference between several competing specs that dictate names
+# for these things. First read these:
+#
+# * https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+# * https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+# * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
+# * https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+#
+# Table of Approximal Associations for ficticious Name "foo"
+# | systemd                  | xdg                      | gnu
+# +----------------------------------------------------------------------------+
+# | $RUNTIME_DIRECTORY       | $XDG_RUNTIME_DIR/foo     | $runstatedir/foo
+# | $STATE_DIRECTORY         | $XDG_CONFIG_HOME/foo     | $localstatedir/lib/foo
+# | $CACHE_DIRECTORY         | $XDG_CACHE_HOME/foo      | $runstatedir/foo
+# | $LOGS_DIRECTORY          | $XDG_CONFIG_HOME/log/foo | $localstatedir/log/foo
+# | $CONFIGURATION_DIRECTORY | $XDG_CONFIG_HOME/foo     | $sysconfdir/foo
+
+Environment=@(Name.upper())_RUNTIME_DIR=/run/lib/@(Name)
+Environment=@(Name.upper())_STATE_DIR=/var/lib/@(Name)
+Environment=@(Name.upper())_CACHE_DIR=/var/cache/@(Name)
+Environment=@(Name.upper())_LOGS_DIR=/var/log/@(Name)
+Environment=@(Name.upper())_CONFIG_DIR=/etc/@(Name)
+
 # roscpp logging is... special.
 Environment=ROS_HOME=/tmp/@(Name)
 ExecStartPre=/bin/sh -c 'rm -rf ${ROS_HOME}'
