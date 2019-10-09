@@ -78,12 +78,6 @@ install(
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/
 )
 
-# https://wiki.ros.org/catkin/CMakeLists.txt#Installing_roslaunch_Files_or_Other_Resources
-install(
-  FILES launch/main.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
 # > type="nodetype"
 # >     Node type. There must be a corresponding executable with the same name.
 #
@@ -99,6 +93,12 @@ install(
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+# main launch file
+# https://wiki.ros.org/catkin/CMakeLists.txt#Installing_roslaunch_Files_or_Other_Resources
+configure_file(launch/main.launch.in launch/main.launch @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/launch/main.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 
 # this is for cmake variable hunting
 if (TRUE)
