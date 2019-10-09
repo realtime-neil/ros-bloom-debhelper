@@ -2,8 +2,10 @@
 
 // clang-format off
 
-#if !defined(@CMAKE_CURRENT_BINARY_DIR@_CONFIG_H)
-#define @CMAKE_CURRENT_BINARY_DIR@_CONFIG_H
+// This include guard isn't globally unique, and that's okay because we only
+// consume it from within the project that generated it.
+#if !defined(CMAKE_CURRENT_BINARY_DIR_CONFIG_H)
+#define CMAKE_CURRENT_BINARY_DIR_CONFIG_H
 
 // This generated header serves the following purposes:
 //
@@ -372,4 +374,4 @@
 #cmakedefine CMAKE_VERBOSE_MAKEFILE "@CMAKE_VERBOSE_MAKEFILE@"
 #cmakedefine CMAKE_VERSION "@CMAKE_VERSION@"
 
-#endif //  !defined(@CMAKE_CURRENT_BINARY_DIR@_CONFIG_H)
+#endif //  !defined(CMAKE_CURRENT_BINARY_DIR_CONFIG_H)
