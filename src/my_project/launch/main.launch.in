@@ -9,7 +9,7 @@
 
       https://wiki.ros.org/roslaunch/XML/node#Attributes
  -->
-  
+
   <!--
       Yep, it has to be an executable, but that executable must be installed to
       CATKIN_PACKAGE_BIN_DESTINATION. `roslaunch` only finds executables

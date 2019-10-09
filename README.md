@@ -210,7 +210,7 @@ the maintainer only _after_ the bloom succeeds.
 
 * In the case where you have both a `debian/foo` and a `debian/foo.em`, the
   expansion of the latter overwrites the former.
-  
+
 * The example `rsyslog` filter rule file is a `cmake` trick, not a `debhelper`
   trick. It's there to illustrate how such a thing would interact with
   `dh_logrotate`.
