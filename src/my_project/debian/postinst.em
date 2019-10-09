@@ -85,6 +85,16 @@ if [ "configure" = "$1" ]; then
         if ! [ -d "${sysuser_home}" ]; then
             usermod --move-home --home "${sysuser_home}" "${sysuser_name}"
         fi
+        for group in adm systemd-journal; do
+            if ! getent group "${group}" >/dev/null 2>&1; then
+                warning "missing group: ${group}"
+                continue
+            fi
+            if ! usermod --append --groups "${group}" "${sysuser_name}"; then
+                die "FAILURE: usermod --append --groups ${group} ${sysuser_name}"
+            fi
+        done
+        info "groups: $(groups "${sysuser_name}")"
     else
         info "${systemd_service_file} does not exist; skipping sysuser"
     fi
