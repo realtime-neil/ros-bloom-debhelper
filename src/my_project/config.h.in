@@ -1,13 +1,10 @@
-// ros-bloom-debhelper/src/my_project/config.h.in
+// @CMAKE_CURRENT_BINARY_DIR@/config.h
 
-#if !defined(ROS_BLOOM_DEBHELPER_SRC_MY_PROJECT_CONFIG_H_IN)
-#define ROS_BLOOM_DEBHELPER_SRC_MY_PROJECT_CONFIG_H_IN
+// clang-format off
 
-// This file is a template. The cmake `configure_file` function processes this
-// template file to create the generated header:
-//
-//     ${CMAKE_CURRENT_BINARY_DIR}/config.h
-//
+#if !defined(@CMAKE_CURRENT_BINARY_DIR@_CONFIG_H)
+#define @CMAKE_CURRENT_BINARY_DIR@_CONFIG_H
+
 // This generated header serves the following purposes:
 //
 // * describe the environment/installation destination(s) known at build time
@@ -21,8 +18,6 @@
 // References:
 //
 // * https://cmake.org/cmake/help/latest/command/configure_file.html
-
-// clang-format off
 
 #cmakedefine CATKIN_BUILD_CONFIGURATION_KEYWORD_SEPARATOR "@CATKIN_BUILD_CONFIGURATION_KEYWORD_SEPARATOR@"
 #cmakedefine CATKIN_DEVEL_PREFIX "@CATKIN_DEVEL_PREFIX@"
@@ -377,4 +372,4 @@
 #cmakedefine CMAKE_VERBOSE_MAKEFILE "@CMAKE_VERBOSE_MAKEFILE@"
 #cmakedefine CMAKE_VERSION "@CMAKE_VERSION@"
 
-#endif //  !defined(ROS_BLOOM_DEBHELPER_SRC_MY_PROJECT_CONFIG_H_IN)
+#endif //  !defined(@CMAKE_CURRENT_BINARY_DIR@_CONFIG_H)
