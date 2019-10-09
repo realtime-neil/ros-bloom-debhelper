@@ -13,8 +13,12 @@
 
 #include "config.h"
 
-#if !defined(CMAKE_PROJECT_NAME)
-#error "undefined CMAKE_PROJECT_NAME"
+#if !defined(PROJECT_NAME)
+#error "undefined PROJECT_NAME"
+#endif
+
+#if !defined(PROJECT_VERSION)
+#error "undefined PROJECT_VERSION"
 #endif
 
 #if !defined(CMAKE_INSTALL_FULL_LOCALSTATEDIR)
@@ -26,16 +30,17 @@
 #endif
 
 int main(int argc, char** argv) {
-  std::cerr << "Hello, " << CMAKE_PROJECT_NAME << "!" << std::endl;
+  std::cerr  //
+      << "Hello, " << PROJECT_NAME << " v" << PROJECT_VERSION << "!" << std::endl;
 
   std::string config_file;
 
   // initialize defaults
-  std::string runtime_dir = "" CMAKE_INSTALL_FULL_LOCALSTATEDIR "/run/" CMAKE_PROJECT_NAME;  //
-  std::string state_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/lib/" CMAKE_PROJECT_NAME;       //
-  std::string logs_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/log/" CMAKE_PROJECT_NAME;        //
-  std::string cache_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/cache/" CMAKE_PROJECT_NAME;     //
-  std::string config_dir = CMAKE_INSTALL_FULL_SYSCONFDIR "/" CMAKE_PROJECT_NAME;             //
+  std::string runtime_dir = "" CMAKE_INSTALL_FULL_LOCALSTATEDIR "/run/" PROJECT_NAME;  //
+  std::string state_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/lib/" PROJECT_NAME;       //
+  std::string logs_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/log/" PROJECT_NAME;        //
+  std::string cache_dir = CMAKE_INSTALL_FULL_LOCALSTATEDIR "/cache/" PROJECT_NAME;     //
+  std::string config_dir = CMAKE_INSTALL_FULL_SYSCONFDIR "/" PROJECT_NAME;             //
 
   {
     ///////////////////////////
@@ -85,9 +90,9 @@ int main(int argc, char** argv) {
     SPIT_OPTION("config-dir", config_dir);
 
     std::cerr << "parsing environment..." << std::endl;
-    po::store(po::parse_environment(desc_envconf,
-                                    boost::to_upper_copy(std::string(CMAKE_PROJECT_NAME "_"))),
-              vm);
+    po::store(
+        po::parse_environment(desc_envconf, boost::to_upper_copy(std::string(PROJECT_NAME "_"))),
+        vm);
     po::notify(vm);
     std::cerr << "parsed environment:" << std::endl;
     SPIT_OPTION("runtime_dir", runtime_dir);
@@ -125,14 +130,14 @@ int main(int argc, char** argv) {
         if ((gotenv = std::getenv("XDG_CONFIG_HOME"))) {
           if (exists((res =                      //
                       std::string(gotenv) + "/"  //
-                      CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf"))) {
+                      PROJECT_NAME "/" PROJECT_NAME ".conf"))) {
             return res;
           }
         }
         if ((gotenv = std::getenv("HOME"))) {
           if (exists((res =                              //
                       std::string(gotenv) + "/.config/"  //
-                      CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf"))) {
+                      PROJECT_NAME "/" PROJECT_NAME ".conf"))) {
             return res;
           }
         }
@@ -141,7 +146,7 @@ int main(int argc, char** argv) {
           std::vector<std::string> splat;
           boost::split(splat, xdg_config_dirs, boost::is_any_of(":"));
           for (std::string each : splat) {
-            if (exists((res = each + "/" CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf"))) {
+            if (exists((res = each + "/" PROJECT_NAME "/" PROJECT_NAME ".conf"))) {
               return res;
             }
           }
@@ -154,7 +159,7 @@ int main(int argc, char** argv) {
         // --
         // https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html#variables
 
-        if (exists((res = "/etc/" CMAKE_PROJECT_NAME "/" CMAKE_PROJECT_NAME ".conf"))) {
+        if (exists((res = "/etc/" PROJECT_NAME "/" PROJECT_NAME ".conf"))) {
           return res;
         }
         // failed to find config file

@@ -21,6 +21,9 @@
 //
 // * https://cmake.org/cmake/help/latest/command/configure_file.html
 
+#cmakedefine PROJECT_NAME "@PROJECT_NAME@"
+#cmakedefine PROJECT_VERSION "@PROJECT_VERSION@"
+
 #cmakedefine CATKIN_BUILD_CONFIGURATION_KEYWORD_SEPARATOR "@CATKIN_BUILD_CONFIGURATION_KEYWORD_SEPARATOR@"
 #cmakedefine CATKIN_DEVEL_PREFIX "@CATKIN_DEVEL_PREFIX@"
 #cmakedefine CATKIN_ENABLE_TESTING "@CATKIN_ENABLE_TESTING@"

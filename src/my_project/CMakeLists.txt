@@ -32,6 +32,9 @@ set(ROS_DISTRO "$ENV{ROS_DISTRO}")
 # because it's handy to have the debian package name
 string(REPLACE "_" "-" PACKAGE_NAME "ros-${ROS_DISTRO}-${PROJECT_NAME}")
 
+# because catkin should do this, but doesn't
+set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
+
 # autoconf-style config header; because config- and build-time cmake variables
 # are nice to have as preprocessor definitions
 configure_file(config.h.in config.h @ONLY)
