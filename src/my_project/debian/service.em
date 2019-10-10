@@ -109,5 +109,26 @@ ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch @(Name) main.launch'
 ExecStopPost=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 
+# https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html#DefaultStartLimitIntervalSec=
+#
+# > DefaultStartLimitIntervalSec=, DefaultStartLimitBurst=
+# >
+# > Configure the default unit start rate limiting, as configured per-service
+# > by StartLimitIntervalSec= and StartLimitBurst=. See systemd.service(5) for
+# > details on the per-service settings. DefaultStartLimitIntervalSec= defaults
+# > to 10s. DefaultStartLimitBurst= defaults to 5.
+#
+#
+# https://www.freedesktop.org/software/systemd/man/systemd.unit.html#StartLimitIntervalSec=interval
+#
+# > StartLimitIntervalSec=interval, StartLimitBurst=burst
+# >
+# > Configure unitstart rate limiting. Units which are started more than burst
+# > times within an interval time interval are not permitted to start any more.
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=61
+StartLimitBurst=6
+
 [Install]
 WantedBy=default.target
