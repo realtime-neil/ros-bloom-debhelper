@@ -105,9 +105,9 @@ Environment=@(Name.upper())_CONFIG_DIR=/etc/@(Name)
 
 # roscpp logging is... special.
 Environment=ROS_HOME=/tmp/@(Name)
-ExecStartPre=/bin/sh -c 'rm -rf ${ROS_HOME}'
+ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch @(Name) main.launch'
-ExecStopPost=/bin/sh -c 'rm -rf ${ROS_HOME}'
+ExecStopPost=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 
 [Install]
 WantedBy=default.target
