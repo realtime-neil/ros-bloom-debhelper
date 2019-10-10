@@ -73,38 +73,37 @@ configure_file(
   etc/rsyslog.d/99-${PACKAGE_NAME}.conf
   @ONLY
 )
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PACKAGE_NAME}.conf
-  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/
-)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PACKAGE_NAME}.conf
+  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/)
 
 
-# executable wrapper script : bin/slug.in -> /usr/bin/${EXE_NAME}
+# install (under /usr) the given kind of artifact after expanding (and
+# renaming) it from the given template using the given replacement mode
+function(gen_install_usr kind template replace_mode)
+  string(REGEX REPLACE "\\.in$" "" product "${template}")
+  string(REPLACE "package_name" "${PACKAGE_NAME}" product "${product}")
+  string(REPLACE "exe_name" "${EXE_NAME}" product "${product}")
+  configure_file(${template} ${product} ${replace_mode})
+  get_filename_component(parent ${product} DIRECTORY)
+
+  # https://github.com/ros/catkin/pull/940
+  install(${kind} ${CMAKE_CURRENT_BINARY_DIR}/${product}
+    DESTINATION "$<$<BOOL:${CATKIN_INSTALL_INTO_PREFIX_ROOT}>:/tmp>/usr/${parent}/")
+endfunction()
+
+# executable wrapper script : bin/exe_name.in -> /usr/bin/${EXE_NAME}
 # https://www.freedesktop.org/software/systemd/man/file-hierarchy.html
-configure_file(bin/slug.in bin/${EXE_NAME} @ONLY)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/bin/${EXE_NAME}
-  DESTINATION "/usr/bin/")
+gen_install_usr(PROGRAMS bin/exe_name.in @ONLY)
 
-# share/icons/hicolor/scalable/apps/slug.svg ->
+# share/icons/hicolor/scalable/apps/package_name.svg ->
 # /usr/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
 # https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
-configure_file(
-  share/icons/hicolor/scalable/apps/slug.svg
-  share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
-)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
-  DESTINATION "/usr/share/applications/hicolor/scalable/apps/")
+gen_install_usr(FILES share/icons/hicolor/scalable/apps/package_name.svg COPYONLY)
 
-# share/applications/slug.desktop.in ->
+# share/applications/package_name.desktop.in ->
 # /usr/share/applications/${PACKAGE_NAME}.desktop
 # https://specifications.freedesktop.org/menu-spec/menu-spec-latest.html#locations
-configure_file(
-  share/applications/slug.desktop.in
-  share/applications/${PACKAGE_NAME}.desktop
-  @ONLY
-)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/applications/${PACKAGE_NAME}.desktop
-  DESTINATION "/usr/share/applications/")
+gen_install_usr(FILES share/applications/package_name.desktop.in @ONLY)
 
 # > type="nodetype"
 # >     Node type. There must be a corresponding executable with the same name.
@@ -117,8 +116,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/applications/${PACKAGE_NAME}.des
 # CATKIN_GLOBAL_BIN_DESTINATION. Because of course it does.
 install(
   TARGETS ${EXE_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
