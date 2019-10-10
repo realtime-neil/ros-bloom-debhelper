@@ -80,6 +80,11 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PACKAGE_NAME}.conf
 # install (under /usr) the given kind of artifact after expanding (and
 # renaming) it from the given template using the given replacement mode
 function(gen_install_usr kind template replace_mode)
+  if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
+    set(ROOTFS_USR "/tmp/usr")
+  else()
+    set(ROOTFS_USR "/usr")
+  endif()
   string(REGEX REPLACE "\\.in$" "" product "${template}")
   string(REPLACE "package_name" "${PACKAGE_NAME}" product "${product}")
   string(REPLACE "exe_name" "${EXE_NAME}" product "${product}")
@@ -88,7 +93,7 @@ function(gen_install_usr kind template replace_mode)
 
   # https://github.com/ros/catkin/pull/940
   install(${kind} ${CMAKE_CURRENT_BINARY_DIR}/${product}
-    DESTINATION "$<$<BOOL:${CATKIN_INSTALL_INTO_PREFIX_ROOT}>:/tmp>/usr/${parent}/")
+    DESTINATION "${ROOTFS_USR}/${parent}/")
 endfunction()
 
 # executable wrapper script : bin/exe_name.in -> /usr/bin/${EXE_NAME}
@@ -98,7 +103,7 @@ gen_install_usr(PROGRAMS bin/exe_name.in @ONLY)
 # share/icons/hicolor/scalable/apps/package_name.svg ->
 # /usr/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
 # https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
-gen_install_usr(FILES share/icons/hicolor/scalable/apps/package_name.svg COPYONLY)
+gen_install_usr(FILES share/icons/hicolor/scalable/apps/package_name.svg @ONLY)
 
 # share/applications/package_name.desktop.in ->
 # /usr/share/applications/${PACKAGE_NAME}.desktop
