@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# @CMAKE_INSTALL_FULL_BINDIR@/@EXE_NAME@
+# @ROOTFS_USR@/bin/@EXE_NAME@
 #
 # Package: @PACKAGE_NAME@
 #
