@@ -1,4 +1,4 @@
-# /usr/share/applications/@PACKAGE_NAME@.desktop
+# @ROOTFS_USR@/share/applications/@PACKAGE_NAME@.desktop
 #
 # https://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
 [Desktop Entry]
