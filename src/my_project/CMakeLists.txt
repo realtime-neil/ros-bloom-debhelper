@@ -87,6 +87,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/launch/main.launch
 # install (under /usr) the given kind of artifact after expanding (and
 # renaming) it from the given template using the given replacement mode
 function(gen_install_usr kind template replace_mode)
+  # https://github.com/ros/catkin/pull/940
   if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
     set(ROOTFS_USR "/tmp/usr")
   else()
@@ -97,8 +98,6 @@ function(gen_install_usr kind template replace_mode)
   string(REPLACE "exe_name" "${EXE_NAME}" product "${product}")
   configure_file(${template} ${product} ${replace_mode})
   get_filename_component(parent ${product} DIRECTORY)
-
-  # https://github.com/ros/catkin/pull/940
   install(${kind} ${CMAKE_CURRENT_BINARY_DIR}/${product}
     DESTINATION "${ROOTFS_USR}/${parent}/")
 endfunction()
