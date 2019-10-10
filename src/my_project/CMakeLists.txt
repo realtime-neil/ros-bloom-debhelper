@@ -83,7 +83,7 @@ install(
 # https://www.freedesktop.org/software/systemd/man/file-hierarchy.html
 configure_file(bin/slug.in bin/${EXE_NAME} @ONLY)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/bin/${EXE_NAME}
-  DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  DESTINATION "/usr/bin/")
 
 # share/icons/hicolor/scalable/apps/slug.svg ->
 # /usr/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
@@ -92,10 +92,8 @@ configure_file(
   share/icons/hicolor/scalable/apps/slug.svg
   share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
 )
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
-  DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/applications/hicolor/scalable/apps
-)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
+  DESTINATION "/usr/share/applications/hicolor/scalable/apps/")
 
 # share/applications/slug.desktop.in ->
 # /usr/share/applications/${PACKAGE_NAME}.desktop
@@ -105,10 +103,8 @@ configure_file(
   share/applications/${PACKAGE_NAME}.desktop
   @ONLY
 )
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/share/applications/${PACKAGE_NAME}.desktop
-  DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/applications
-)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/applications/${PACKAGE_NAME}.desktop
+  DESTINATION "/usr/share/applications/")
 
 # > type="nodetype"
 # >     Node type. There must be a corresponding executable with the same name.
