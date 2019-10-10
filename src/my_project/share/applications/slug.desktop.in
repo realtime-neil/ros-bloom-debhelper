@@ -1,0 +1,10 @@
+# @CMAKE_INSTALL_FULL_DATAROOTDIR@/applications/@PACKAGE_NAME@.desktop
+#
+# https://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
+[Desktop Entry]
+Type=Application
+Name=@EXE_NAME@
+Icon=@PACKAGE_NAME@
+Exec=@CMAKE_INSTALL_FULL_BINDIR@/@EXE_NAME@
+Terminal=false
+StartupNotify=true

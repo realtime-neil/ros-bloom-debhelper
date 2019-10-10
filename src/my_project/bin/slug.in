@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# @CMAKE_INSTALL_FULL_BINDIR@/@EXE_NAME@
+#
+# Package: @PACKAGE_NAME@
+#
+# This is a script that resides within the default $PATH and wraps invocations
+# to the catkin-built (global) binary executable of the same name.
+
+. @CMAKE_INSTALL_PREFIX@/setup.sh
+
+@CMAKE_INSTALL_PREFIX@/@CATKIN_GLOBAL_BIN_DESTINATION@/@EXE_NAME@ $@@
