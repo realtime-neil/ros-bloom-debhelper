@@ -57,25 +57,32 @@ add_executable(${EXE_NAME} src/main.cpp)
 target_link_libraries(${EXE_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 
 # project config file
-configure_file(
-  etc/slug.conf.in
-  etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
-  @ONLY
-)
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
-  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/${PROJECT_NAME}
-)
+configure_file(etc/slug.conf.in etc/${PROJECT_NAME}/${PROJECT_NAME}.conf @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
+  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/${PROJECT_NAME})
 
 # rsyslog filter rule - because debhelper can't do this (yet)
-configure_file(
-  etc/rsyslog.d/99-slug.conf.in
-  etc/rsyslog.d/99-${PACKAGE_NAME}.conf
-  @ONLY
-)
+configure_file(etc/rsyslog.d/99-slug.conf.in etc/rsyslog.d/99-${PACKAGE_NAME}.conf @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PACKAGE_NAME}.conf
-  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d/)
+  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d)
 
+# > type="nodetype"
+# >     Node type. There must be a corresponding executable with the same name.
+#
+# -- https://wiki.ros.org/roslaunch/XML/node
+#
+# Yep, it has to be an executable, but that executable must be installed to the
+# CATKIN_PACKAGE_BIN_DESTINATION. `roslaunch` only finds executables installed
+# to the CATKIN_PACKAGE_BIN_DESTINATION and definitely NOT the
+# CATKIN_GLOBAL_BIN_DESTINATION. Because of course it does.
+install(TARGETS ${EXE_NAME}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+# main launch file
+# https://wiki.ros.org/catkin/CMakeLists.txt#Installing_roslaunch_Files_or_Other_Resources
+configure_file(launch/main.launch.in launch/main.launch @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/launch/main.launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 
 # install (under /usr) the given kind of artifact after expanding (and
 # renaming) it from the given template using the given replacement mode
@@ -109,26 +116,6 @@ gen_install_usr(FILES share/icons/hicolor/scalable/apps/package_name.svg @ONLY)
 # /usr/share/applications/${PACKAGE_NAME}.desktop
 # https://specifications.freedesktop.org/menu-spec/menu-spec-latest.html#locations
 gen_install_usr(FILES share/applications/package_name.desktop.in @ONLY)
-
-# > type="nodetype"
-# >     Node type. There must be a corresponding executable with the same name.
-#
-# -- https://wiki.ros.org/roslaunch/XML/node
-#
-# Yep, it has to be an executable, but that executable must be installed to the
-# CATKIN_PACKAGE_BIN_DESTINATION. `roslaunch` only finds executables installed
-# to the CATKIN_PACKAGE_BIN_DESTINATION and definitely NOT the
-# CATKIN_GLOBAL_BIN_DESTINATION. Because of course it does.
-install(
-  TARGETS ${EXE_NAME}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-# main launch file
-# https://wiki.ros.org/catkin/CMakeLists.txt#Installing_roslaunch_Files_or_Other_Resources
-configure_file(launch/main.launch.in launch/main.launch @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/launch/main.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 
 # this is for cmake variable hunting
 if (TRUE)
