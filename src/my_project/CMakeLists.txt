@@ -110,7 +110,7 @@ endfunction()
 # https://www.freedesktop.org/software/systemd/man/file-hierarchy.html
 gen_install_usr(PROGRAMS bin/exe_name.in @ONLY)
 
-# share/icons/hicolor/scalable/apps/package_name.svg ->
+# share/icons/hicolor/scalable/apps/package_name.svg.in ->
 # /usr/share/icons/hicolor/scalable/apps/${PACKAGE_NAME}.svg
 # https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html#directory_layout
 gen_install_usr(FILES share/icons/hicolor/scalable/apps/package_name.svg.in @ONLY)
