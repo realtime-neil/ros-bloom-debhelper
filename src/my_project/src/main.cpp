@@ -68,9 +68,9 @@ int main(int argc, char** argv) {
         ("logs_dir", po::value<std::string>(&logs_dir), "logs directory")           //
         ("config_dir", po::value<std::string>(&config_dir), "config directory")     //
         ;
-    auto parsed =
+    auto const parsed =
         po::command_line_parser(argc, argv).options(desc_cmdline).allow_unregistered().run();
-    auto unknown_options = po::collect_unrecognized(parsed.options, po::include_positional);
+    auto const unknown_options = po::collect_unrecognized(parsed.options, po::include_positional);
     if (!unknown_options.empty()) {
       std::cerr << "WARNING: unknown arguments:" << std::endl;
       for (auto unknown_option : unknown_options) {
