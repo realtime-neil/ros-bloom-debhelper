@@ -58,13 +58,13 @@ add_executable(${EXE_NAME} src/main.cpp)
 target_link_libraries(${EXE_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 
 # project config file
-configure_file(etc/slug.conf.in etc/${PROJECT_NAME}/${PROJECT_NAME}.conf @ONLY)
+configure_file(etc/project_name.conf.in etc/${PROJECT_NAME}/${PROJECT_NAME}.conf @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/${PROJECT_NAME})
 
 # rsyslog filter rule - because debhelper can't do this (yet)
-configure_file(etc/rsyslog.d/99-slug.conf.in etc/rsyslog.d/99-${PACKAGE_NAME}.conf @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PACKAGE_NAME}.conf
+configure_file(etc/rsyslog.d/99-project_name.conf.in etc/rsyslog.d/99-${PROJECT_NAME}.conf @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/etc/rsyslog.d/99-${PROJECT_NAME}.conf
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/rsyslog.d)
 
 # > type="nodetype"
