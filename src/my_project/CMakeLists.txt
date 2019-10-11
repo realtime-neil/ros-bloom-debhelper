@@ -38,21 +38,17 @@ set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
 # autoconf-style config header; because config- and build-time cmake variables
 # are nice to have as preprocessor definitions
 configure_file(config.h.in config.h @ONLY)
-
-include_directories(
-  # > A relative path is treated with respect to the value of
-  # > CMAKE_CURRENT_BINARY_DIR. If the path names an existing directory the
-  # > output file is placed in that directory with the same file name as the
-  # > input file.
-  #
-  # -- https://cmake.org/cmake/help/latest/command/configure_file.html
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 include_directories(SYSTEM ${boost_INCLUDE_DIR})
 
-# because underscores in an executable basename look weird
-string(REPLACE "_" "-" EXE_NAME "${PROJECT_NAME}")
+if (FALSE)
+  # underscores in an executable basename look weird...
+  string(REPLACE "_" "-" EXE_NAME "${PROJECT_NAME}")
+else()
+  # ...but some people like that.
+  set(EXE_NAME "${PROJECT_NAME}")
+endif()
 add_executable(${EXE_NAME} src/main.cpp)
 target_link_libraries(${EXE_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 
@@ -88,10 +84,13 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/launch/main.launch
 # renaming) it from the given template using the given replacement mode
 function(gen_install_usr kind template replace_mode)
   # https://github.com/ros/catkin/pull/940
-  if(CATKIN_INSTALL_INTO_PREFIX_ROOT)
-    set(ROOTFS_USR "/tmp/usr")
-  else()
+  # https://github.com/colcon/colcon-ros/pull/11
+  if(CATKIN_BUILD_BINARY_PACKAGE)
+    # we're making the real deal
     set(ROOTFS_USR "/usr")
+  else()
+    # fake it to see what happens
+    set(ROOTFS_USR "/tmp/usr")
   endif()
   string(REGEX REPLACE "\\.in$" "" product "${template}")
   string(REPLACE "package_name" "${PACKAGE_NAME}" product "${product}")
