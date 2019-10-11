@@ -50,6 +50,7 @@ endif()
 # autoconf-style config header; because config- and build-time cmake variables
 # are nice to have as preprocessor definitions
 configure_file(config.h.in config.h @ONLY)
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(SYSTEM ${boost_INCLUDE_DIR})
 
