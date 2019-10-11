@@ -23,6 +23,10 @@ catkin_package(
     Boost
 )
 
+###########
+## Build ##
+###########
+
 # because ROS_DISTRO is an env var, not (yet) a cmake var
 if ("" STREQUAL "$ENV{ROS_DISTRO}")
   message(FATAL_ERROR "undefined env var ROS_DISTRO")
@@ -35,13 +39,6 @@ string(REPLACE "_" "-" PACKAGE_NAME "ros-${ROS_DISTRO}-${PROJECT_NAME}")
 # because catkin should do this, but doesn't
 set(PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
 
-# autoconf-style config header; because config- and build-time cmake variables
-# are nice to have as preprocessor definitions
-configure_file(config.h.in config.h @ONLY)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-include_directories(SYSTEM ${boost_INCLUDE_DIR})
-
 if (FALSE)
   # underscores in an executable basename look weird...
   string(REPLACE "_" "-" EXE_NAME "${PROJECT_NAME}")
@@ -49,6 +46,13 @@ else()
   # ...but some people like that.
   set(EXE_NAME "${PROJECT_NAME}")
 endif()
+
+# autoconf-style config header; because config- and build-time cmake variables
+# are nice to have as preprocessor definitions
+configure_file(config.h.in config.h @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(SYSTEM ${boost_INCLUDE_DIR})
+
 add_executable(${EXE_NAME} src/main.cpp)
 target_link_libraries(${EXE_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 
