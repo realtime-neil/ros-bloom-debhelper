@@ -2,7 +2,8 @@
 
 # @ROOTFS_USR@/bin/@EXE_NAME@
 #
-# Package: @PACKAGE_NAME@
+# Debian package: @PACKAGE_NAME@
+# catkin project: @PROJECT_NAME@
 #
 # This is a script that resides within the default $PATH and wraps invocations
 # to the catkin-built (global) binary executable of the same name.
