@@ -2,4 +2,4 @@
     title="@(Name)" \
     section="Applications" \
     needs="text" \
-    command="/usr/bin/@(Name.replace('_','-'))"
+    command="/usr/bin/@(Name)"
