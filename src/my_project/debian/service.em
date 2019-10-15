@@ -110,7 +110,7 @@ ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 # roscore is... special. And the following doesn't work. And I have no idea
 # why. I have only the vague notion that roscore _really_ doesn't like being
 # backgrounded from a service unit.
-# 
+#
 #ExecStartPre=/bin/sh -c '. @(InstallationPrefix)/setup.sh; nohup roscore -v 2>&1 &'
 #ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && roslaunch -v --wait @(Name) main.launch'
 
