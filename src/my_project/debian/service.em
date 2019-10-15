@@ -106,7 +106,20 @@ Environment=@(Name.upper())_CONFIG_DIR=/etc/@(Name)
 # roscpp logging is... special.
 Environment=ROS_HOME=/tmp/@(Name)
 ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
-ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch @(Name) main.launch'
+
+# roscore is... special. And the following doesn't work. And I have no idea
+# why. I have only the vague notion that roscore _really_ doesn't like being
+# backgrounded from a service unit.
+# 
+#ExecStartPre=/bin/sh -c '. @(InstallationPrefix)/setup.sh; nohup roscore -v 2>&1 &'
+#ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && roslaunch -v --wait @(Name) main.launch'
+
+# We let roslaunch try to start the roscore. roslaunch is pretty bad at
+# detecting a running roscore and, in the case of a false negative, will try to
+# start a roscore when there is already one running. When this happens,
+# roslaunch will exit with failure. This isn't great, but it's a condition
+# systemd can detect and counter with restart attempts.
+ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch -v @(Name) main.launch'
 ExecStopPost=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 
 # https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html#DefaultStartLimitIntervalSec=
@@ -126,9 +139,16 @@ ExecStopPost=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 # > Configure unitstart rate limiting. Units which are started more than burst
 # > times within an interval time interval are not permitted to start any more.
 Restart=always
-RestartSec=10
-StartLimitIntervalSec=61
-StartLimitBurst=6
+RestartSec=5
+
+# > core: rename StartLimitInterval= to StartLimitIntervalSec=
+#
+# https://github.com/systemd/systemd/commit/f0367da7d1a61ad698a55d17b5c28ddce0dc265a#diff-23355de3ac6bfc17cc1269b0de712568
+#
+# Allow indefinite restarts as long as they don't come at (or faster than) the
+# 1/RestartSec frequency as measured over 15 seconds.
+StartLimitInterval=14
+StartLimitBurst=3
 
 [Install]
 WantedBy=default.target
