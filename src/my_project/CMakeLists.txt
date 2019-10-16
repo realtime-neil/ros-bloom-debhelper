@@ -119,6 +119,9 @@ gen_install_rootfs(FILES usr/share/icons/hicolor/scalable/apps/package_name.svg.
 # https://specifications.freedesktop.org/menu-spec/menu-spec-latest.html#locations
 gen_install_rootfs(FILES usr/share/applications/package_name.desktop.in @ONLY)
 
+# Run roscore as a separate systemd service because roslaunch has a race
+# condition: https://github.com/ros/ros_comm/issues/1831
+#
 # lib/systemd/system/roscore.service -> /lib/systemd/system/roscore.service
 # https://www.freedesktop.org/software/systemd/man/systemd.unit.html
 gen_install_rootfs(FILES lib/systemd/system/roscore.service.in @ONLY)
