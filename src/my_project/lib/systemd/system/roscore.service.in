@@ -1,65 +1,35 @@
-# /lib/systemd/system/@(Package).service
+# @ROOTFS@/lib/systemd/system/roscore.service
 
 [Unit]
-Description=@(Description)
+Description=roscore
 After=network.target
 
 [Service]
-# Note: Here, where the ROS documentation says "package", it means "catkin
-# project". They are _not_ the same.
-#
-# > The package [sic] name must start with a letter and contain only lowercase
-# > alphabetic, numeric or underscore characters. The package [sic] name should
-# > be unique within the ROS community. It may differ from the folder name into
-# > which it is checked out, but that is not recommended.
-#
-# -- https://www.ros.org/reps/rep-0140.html#name
-#
-# > It is usually recommended to only use usernames that begin with a lower
-# > case letter or an underscore, followed by lower case letters, digits,
-# > underscores, or dashes. They can end with a dollar sign. In regular
-# > expression terms: [a-z_][a-z0-9_-]*[$]?
-#
-# > On Debian, the only constraints are that usernames must neither start with
-# > a dash ('-') nor plus ('+') nor tilde ('~') nor contain a colon (':'), a
-# > comma (','), or a whitespace (space: ' ', end of line: '\n', tabulation:
-# > '\t', etc.). Note that using a slash ('/') may break the default algorithm
-# > for the definition of the user's home directory.
-#
-# > Usernames may only be up to 32 characters long.
-#
-# -- man 8 useradd
-User=@(Name[:32])
-
-# references:
-# * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities
-# * http://man7.org/linux/man-pages/man7/capabilities.7.html
-CapabilityBoundingSet=CAP_SYS_NICE
-AmbientCapabilities=CAP_SYS_NICE
+User=roscore
 
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
-RuntimeDirectory=@(Name)
+RuntimeDirectory=roscore
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
 # export the RUNTIME_DIRECTORY env var, so we have to do this:
-Environment=RUNTIME_DIRECTORY=/run/@(Name)
+Environment=RUNTIME_DIRECTORY=/run/roscore
 
 # systemd version 229 (shipping with Ubuntu Xenial, as of this writing) doesn't
 # have any of the following:
 #
-#StateDirectory=@(Name)
-#CacheDirectory=@(Name)
-#LogsDirectory=@(Name)
-#ConfigurationDirectory=@(Name)
+#StateDirectory=roscore
+#CacheDirectory=roscore
+#LogsDirectory=roscore
+#ConfigurationDirectory=roscore
 #
 # ...so fake it:
 
 PermissionsStartOnly=true
 
-Environment=STATE_DIRECTORY=/var/lib/@(Name)
-Environment=CACHE_DIRECTORY=/var/cache/@(Name)
-Environment=LOGS_DIRECTORY=/var/log/@(Name)
-Environment=CONFIGURATION_DIRECTORY=/etc/@(Name)
+Environment=STATE_DIRECTORY=/var/lib/roscore
+Environment=CACHE_DIRECTORY=/var/cache/roscore
+Environment=LOGS_DIRECTORY=/var/log/roscore
+Environment=CONFIGURATION_DIRECTORY=/etc/roscore
 
 ExecStartPre=/bin/sh -c 'mkdir -vp ${STATE_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'mkdir -vp ${CACHE_DIRECTORY}'
@@ -97,29 +67,17 @@ ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
 # -- https://cmake.org/cmake/help/v3.9/module/GNUInstallDirs.html
 
 # This is okay because Ubuntu has symlink /var/run -> /run
-Environment=@(Name.upper())_RUNTIME_DIR=/var/run/@(Name)
-Environment=@(Name.upper())_STATE_DIR=/var/lib/@(Name)
-Environment=@(Name.upper())_CACHE_DIR=/var/cache/@(Name)
-Environment=@(Name.upper())_LOGS_DIR=/var/log/@(Name)
-Environment=@(Name.upper())_CONFIG_DIR=/etc/@(Name)
+Environment=ROSCORE_RUNTIME_DIR=/var/run/roscore
+Environment=ROSCORE_STATE_DIR=/var/lib/roscore
+Environment=ROSCORE_CACHE_DIR=/var/cache/roscore
+Environment=ROSCORE_LOGS_DIR=/var/log/roscore
+Environment=ROSCORE_CONFIG_DIR=/etc/roscore
 
 # roscpp logging is... special.
-Environment=ROS_HOME=/tmp/@(Name)
+Environment=ROS_HOME=/tmp/roscore
 ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 
-# roscore is... special. And the following doesn't work. And I have no idea
-# why. I have only the vague notion that roscore _really_ doesn't like being
-# backgrounded from a service unit.
-#
-#ExecStartPre=/bin/sh -c '. @(InstallationPrefix)/setup.sh; nohup roscore -v 2>&1 &'
-#ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && roslaunch -v --wait @(Name) main.launch'
-
-# We let roslaunch try to start the roscore. roslaunch is pretty bad at
-# detecting a running roscore and, in the case of a false negative, will try to
-# start a roscore when there is already one running. When this happens,
-# roslaunch will exit with failure. This isn't great, but it's a condition
-# systemd can detect and counter with restart attempts.
-ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch --wait -v @(Name) main.launch'
+ExecStart=/bin/sh -c '. @CMAKE_INSTALL_PREFIX@/setup.sh && env | sort && roscore -v 2>&1'
 ExecStopPost=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 
 # https://www.freedesktop.org/software/systemd/man/systemd-system.conf.html#DefaultStartLimitIntervalSec=

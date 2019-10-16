@@ -7,6 +7,7 @@
 #include <iostream>
 #include <thread>
 
+#include <ros/ros.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/program_options.hpp>
@@ -225,7 +226,11 @@ int main(int argc, char** argv) {
   }
   std::cerr << "SUCCESS: nice(-5) == " << res << std::endl;
 
-  while (true) {
+  std::cerr << "initializing ros..." << std::endl;
+  ros::init(argc, argv, PROJECT_NAME);
+  std::cerr << "...initialized ros." << std::endl;
+
+  while (ros::ok()) {
     std::cerr << "sleeping for 10 seconds..." << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(10));
   }

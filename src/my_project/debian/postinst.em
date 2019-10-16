@@ -37,8 +37,6 @@ readonly whatami="$(basename "${this}")"
 
 readonly package="@(Package)"
 readonly project="@(Name)"
-readonly systemd_service_file="/lib/systemd/system/${package}.service"
-readonly sysuser_name="$(echo "${project}" | cut -c-32)"
 readonly sysuser_home="/nonexistent"
 readonly udev_rules_file="/lib/udev/rules.d/60-${package}.rules"
 
@@ -57,11 +55,21 @@ die() {
 # SYSUSER BEGIN #
 #################
 
-# The section "Automatically added by dh_systemd_start" (re)starts the
-# service which requires a sysuser. Add the sysuser first.
+# The section "Automatically added by dh_systemd_start" (re)starts the service
+# which requires a sysuser. Add the sysuser(s) first.
 if [ "configure" = "$1" ]; then
-    if [ -f "${systemd_service_file}" ]; then
-        info "${systemd_service_file} exists; checking sysuser..."
+    dpkg -L "${package}" | grep '\.service$' | while read service_file; do
+        if ! [ -f "${service_file}" ]; then
+            warning "missing service file: ${service_file}; skipping sysuser"
+            continue
+        fi
+        info "${service_file} exists; checking for User..."
+        sysuser_name="$(sed -nr 's/^User=([a-z_][a-z0-9_-]*[$]?)/\1/p' <"${service_file}")"
+        if ! [ -n "${sysuser_name}" ]; then
+            warning "missing User: ${service_file}; skipping sysuser"
+            continue
+        fi
+        info "${service_file} User: ${sysuser_name}; checking..."
         if getent passwd "${sysuser_name}" >/dev/null 2>&1; then
             info "extant sysuser: $(getent passwd "${sysuser_name}")"
         else
@@ -95,9 +103,7 @@ if [ "configure" = "$1" ]; then
             fi
         done
         info "groups: $(groups "${sysuser_name}")"
-    else
-        info "${systemd_service_file} does not exist; skipping sysuser"
-    fi
+    done
 fi
 
 ###############
@@ -109,6 +115,46 @@ fi
 #DEBHELPER#
 
 ################################################################################
+
+#######################
+# SYSTEMD FIXUP BEGIN #
+#######################
+
+# The section "Automatically added by dh_systemd_start" attempts to unmask,
+# enable, and/or update-state for service units that are detected by
+# debhelper. Unfortunately, because bloom can only generate a single systemd
+# service unit --- that is, the one named for the Debian package --- we have to
+# find the others and give them equal treatment.
+if [ "configure" = "$1" ]; then
+    dpkg -L "${package}" | grep '\.service$' | while read service_file; do
+        if [ "${package}" = "$(basename "${service_file}" .service)" ]; then
+            continue
+        fi
+        if ! [ -f "${service_file}" ]; then
+            warning "missing service file: ${service_file}; skipping systemd fixup"
+            continue
+        fi
+        info "${service_file}: enabling..."
+        # dh_systemd_enable COPYPASTA BEGIN
+        deb-systemd-helper unmask "$(basename "${service_file}")" >/dev/null || true
+        # was-enabled defaults to true, so new installations run enable.
+        if deb-systemd-helper --quiet was-enabled "$(basename "${service_file}")"; then
+            # Enables the unit on first installation, creates new symlinks on
+            # upgrades if the unit file has changed.
+            deb-systemd-helper enable "$(basename "${service_file}")" >/dev/null || true
+        else
+            # Update the statefile to add new symlinks (if any), which need to
+            # be cleaned up on purge. Also remove old symlinks.
+            deb-systemd-helper update-state "$(basename "${service_file}")" >/dev/null || true
+        fi
+        systemctl --system daemon-reload >/dev/null || true
+        deb-systemd-invoke start "$(basename "${service_file}")" >/dev/null || true
+        # dh_systemd_enable COPYPASTA END
+    done
+fi
+#######################
+# SYSTEMD FIXUP BEGIN #
+#######################
 
 ##############
 # UDEV BEGIN #
