@@ -1,4 +1,4 @@
-# @ROOTFS@/lib/systemd/system/roscore.service
+# @ROOTFS@lib/systemd/system/roscore.service
 
 [Unit]
 Description=roscore

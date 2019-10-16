@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# @ROOTFS@/usr/bin/@EXE_NAME@
+# @ROOTFS@usr/bin/@EXE_NAME@
 #
 # Debian package: @PACKAGE_NAME@
 # catkin project: @PROJECT_NAME@

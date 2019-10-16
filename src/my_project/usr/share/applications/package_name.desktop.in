@@ -1,10 +1,10 @@
-# @ROOTFS@/usr/share/applications/@PACKAGE_NAME@.desktop
+# @ROOTFS@usr/share/applications/@PACKAGE_NAME@.desktop
 #
 # https://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
 [Desktop Entry]
 Type=Application
 Name=@EXE_NAME@
 Icon=@PACKAGE_NAME@
-Exec=@ROOTFS@/usr/bin/@EXE_NAME@
+Exec=@ROOTFS@usr/bin/@EXE_NAME@
 Terminal=false
 StartupNotify=true
