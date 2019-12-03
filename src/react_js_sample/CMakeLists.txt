@@ -94,9 +94,7 @@ endfunction()
 
 npmify(react-js-sample
   react-js-sample/.babelrc
-  react-js-sample/.gitignore
   react-js-sample/.npmignore
-  react-js-sample/.travis.yml
   react-js-sample/README.md
   react-js-sample/app.json
   react-js-sample/package.json
