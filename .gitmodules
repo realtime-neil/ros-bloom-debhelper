@@ -1,0 +1,3 @@
+[submodule "src/react_js_sample/react-js-sample"]
+	path = src/react_js_sample/react-js-sample
+	url = https://github.com/edoko/react-js-sample.git
