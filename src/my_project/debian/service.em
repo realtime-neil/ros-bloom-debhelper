@@ -66,10 +66,10 @@ ExecStartPre=/bin/sh -c 'mkdir -vp ${CACHE_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'mkdir -vp ${LOGS_DIRECTORY}'
 ExecStartPre=/bin/sh -c 'mkdir -vp ${CONFIGURATION_DIRECTORY}'
 
-ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${STATE_DIRECTORY}'
-ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CACHE_DIRECTORY}'
-ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${LOGS_DIRECTORY}'
-ExecStartPre=/bin/sh -c 'chown -vR ${USER}:${USER} ${CONFIGURATION_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR $(id -u ${USER}):$(id -g ${USER}) ${STATE_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR $(id -u ${USER}):$(id -g ${USER}) ${CACHE_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR $(id -u ${USER}):$(id -g ${USER}) ${LOGS_DIRECTORY}'
+ExecStartPre=/bin/sh -c 'chown -vR $(id -u ${USER}):$(id -g ${USER}) ${CONFIGURATION_DIRECTORY}'
 
 # We need to adapt "The Big Five" env vars into forms that can be easily parsed
 # by boost program options; i.e., with a $PROJECT prefix. What's more, we need
