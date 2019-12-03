@@ -49,6 +49,26 @@ die() {
     exit 1
 }
 
+udev_bounce() {
+    if ischroot; then
+        warning "chroot detected"
+        return 1
+    fi
+    if ! command -v udevadm >/dev/null 2>&1; then
+        warning "missing command: udevadm"
+        return 1
+    fi
+    if ! udevadm control --reload-rules; then
+        warning "FAILURE: udevadm control --reload-rules"
+        return 1
+    fi
+    if ! udevadm trigger; then
+        warning "FAILURE: udevadm trigger"
+        return 1
+    fi
+    return 0
+}
+
 ################################################################################
 
 #################
@@ -164,20 +184,12 @@ fi
 # changes to udev rules under /etc/udev/rules.d. Bounce udev after that
 if [ "configure" = "$1" ]; then
     if [ -f "${udev_rules_file}" ]; then
-        info "${udev_rules_file} exists; checking udev bounce..."
-        if ischroot; then
-            warning "chroot detected, skipping udev bounce"
+        info "${udev_rules_file} exists; trying udev bounce..."
+        if udev_bounce; then
+            info "SUCCESS: udev bounce"
         else
-            if ! udevadm control --reload-rules; then
-                die "FAILURE: udevadm control --reload-rules"
-            fi
-            if ! udevadm trigger; then
-                die "FAILURE: udevadm trigger"
-            fi
-            info "udev bounced"
+            warning "FAILURE: udev bounce"
         fi
-    else
-        info "${udev_rules_file} does not exist; skipping udev bounce"
     fi
 fi
 ############
