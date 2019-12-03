@@ -34,8 +34,8 @@ User=@(Name[:32])
 # references:
 # * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities
 # * http://man7.org/linux/man-pages/man7/capabilities.7.html
-CapabilityBoundingSet=CAP_SYS_NICE
-AmbientCapabilities=CAP_SYS_NICE
+CapabilityBoundingSet=CAP_SYS_NICE CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_SYS_NICE CAP_NET_BIND_SERVICE
 
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
 RuntimeDirectory=@(Name)
