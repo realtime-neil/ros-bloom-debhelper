@@ -37,6 +37,9 @@ User=@(Name[:32])
 CapabilityBoundingSet=CAP_SYS_NICE CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_SYS_NICE CAP_NET_BIND_SERVICE
 
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Nice=
+Nice=-10
+
 # https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
 RuntimeDirectory=@(Name)
 
