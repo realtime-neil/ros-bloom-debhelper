@@ -30,6 +30,7 @@ After=network.target
 #
 # -- man 8 useradd
 User=@(Name[:32])
+SyslogIdentifier=@(Name)
 
 # references:
 # * https://www.freedesktop.org/software/systemd/man/systemd.exec.html#Capabilities
