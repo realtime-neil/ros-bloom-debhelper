@@ -73,9 +73,9 @@ if ! command -v node >/dev/null 2>&1; then
     die "missing command: node"
 fi
 
-# $CATKIN_PACKAGE_SHARE_DESTINATION == $(rospack find FOO)
-if ! pkgdir="$(rospack find @PACKAGE_NAME@)"; then
-    die "FAILURE: rospack find @PACKAGE_NAME@"
+# $CATKIN_PACKAGE_SHARE_DESTINATION == $(rospack find $PROJECT_NAME)
+if ! pkgdir="$(rospack find @PROJECT_NAME@)"; then
+    die "FAILURE: rospack find @PROJECT_NAME@"
 fi
 readonly pkgdir="${pkgdir}"
 
