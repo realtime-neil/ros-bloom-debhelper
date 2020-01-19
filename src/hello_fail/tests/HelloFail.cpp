@@ -1,11 +1,7 @@
 #include <gtest/gtest.h>
 
 TEST(HelloFail, QuickFail) {
-#if 0
   ASSERT_TRUE(false);
-#else
-  ASSERT_TRUE(true);
-#endif  // 0
 }
 
 int main(int argc, char* argv[]) {
