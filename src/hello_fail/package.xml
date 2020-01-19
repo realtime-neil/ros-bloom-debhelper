@@ -6,8 +6,8 @@
   <maintainer email="bryce@rtr.ai">Bryce</maintainer>
   <license>Proprietary</license>
 
+  <build_depend>cmake_modules</build_depend>
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <test_depend>rosunit</test_depend>
 </package>
-

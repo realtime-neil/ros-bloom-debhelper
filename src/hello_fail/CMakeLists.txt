@@ -3,9 +3,8 @@ project(hello_fail)
 
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-)
+find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(cmake_modules REQUIRED)
 
 catkin_package(CATKIN_DEPENDS roscpp)
 
