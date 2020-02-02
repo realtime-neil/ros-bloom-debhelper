@@ -8,7 +8,9 @@
 
   <build_depend>cmake_modules</build_depend>
   <build_depend>libboost-program-options-dev</build_depend>
+  <build_export_depend>message_generation</build_export_depend>
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <exec_depend>libboost-program-options</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 </package>

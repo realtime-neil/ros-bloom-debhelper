@@ -10,12 +10,18 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_compile_options(-Wall -Wextra -Werror -fPIC)
 
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS
+  message_generation
+  roscpp
+)
 
 # https://github.com/ros/cmake_modules
 find_package(cmake_modules REQUIRED)
 
 find_package(Boost REQUIRED COMPONENTS program_options)
+
+add_message_files(DIRECTORY msg FILES PassThis.msg)
+generate_messages(LANGS gencpp genpy gennodejs)
 
 catkin_package(
   CATKIN_DEPENDS roscpp
