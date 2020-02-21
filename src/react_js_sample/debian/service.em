@@ -117,21 +117,20 @@ Environment=@(Name.upper())_CONFIG_DIR=/etc/@(Name)
 WorkingDirectory=%t/%N
 
 # roscpp logging is... special.
-Environment=ROS_HOME=/tmp/@(Name)
+Environment=ROS_HOME=%t/%N/ros-home
 ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
+ExecStartPre=/bin/sh -c 'mkdir -vp ${ROS_HOME}'
+ExecStartPre=/bin/sh -c 'chown -vR $(id -u ${USER}):$(id -g ${USER}) ${ROS_HOME}'
 
-# roscore is... special. And the following doesn't work. And I have no idea
-# why. I have only the vague notion that roscore _really_ doesn't like being
-# backgrounded from a service unit.
+# Do NOT let `roslaunch` try to start the roscore. `roslaunch` is FANTASTICALLY
+# HORRIBLE at detecting a running roscore and, in the case of a false negative,
+# will happily start multiple roscores. This is great because, in ROS land,
+# `roscore` is tacitly assumed to be a host-wide singleton. Running multiple
+# roscores is a great way to demonstrate the condition known as "split-brain",
+# wherein your roslaunched processes are "up" but can't communicate. Fun times!
 #
-#ExecStartPre=/bin/sh -c '. @(InstallationPrefix)/setup.sh; nohup roscore -v 2>&1 &'
-#ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && roslaunch -v --wait @(Name) main.launch'
-
-# We let roslaunch try to start the roscore. roslaunch is pretty bad at
-# detecting a running roscore and, in the case of a false negative, will try to
-# start a roscore when there is already one running. When this happens,
-# roslaunch will exit with failure. This isn't great, but it's a condition
-# systemd can detect and counter with restart attempts.
+# https://github.com/ros/ros_comm/issues/1831
+# https://wiki.ros.org/action/info/roslaunch?action=diff&rev2=150&rev1=149
 ExecStart=/bin/sh -c '. @(InstallationPrefix)/setup.sh && env | sort && roslaunch --wait -v @(Name) main.launch'
 ExecStopPost=/bin/sh -c 'rm -vrf ${ROS_HOME}'
 
