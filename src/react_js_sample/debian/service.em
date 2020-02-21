@@ -111,6 +111,11 @@ Environment=@(Name.upper())_CACHE_DIR=/var/cache/@(Name)
 Environment=@(Name.upper())_LOGS_DIR=/var/log/@(Name)
 Environment=@(Name.upper())_CONFIG_DIR=/etc/@(Name)
 
+# In "normal" conditions, `%t/%N` becomes `/run/$NAME`.
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#WorkingDirectory=
+# https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Specifiers
+WorkingDirectory=%t/%N
+
 # roscpp logging is... special.
 Environment=ROS_HOME=/tmp/@(Name)
 ExecStartPre=/bin/sh -c 'rm -vrf ${ROS_HOME}'
