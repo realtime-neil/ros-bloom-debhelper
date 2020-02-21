@@ -58,6 +58,10 @@ Environment=RUNTIME_DIRECTORY=/run/@(Name)
 #
 # ...so fake it:
 
+# Execute pre and post scripts as root, otherwise it does it as User=
+#
+# THIS IS DEPRECATED BUT NOT YET REMOVED
+# https://github.com/systemd/systemd/pull/10802#issuecomment-439446299
 PermissionsStartOnly=true
 
 Environment=STATE_DIRECTORY=/var/lib/@(Name)
