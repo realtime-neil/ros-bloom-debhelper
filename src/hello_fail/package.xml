@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>hello_fail</name>
-  <version>1.0.0</version>
+  <version>0.0.1</version>
   <description>A package Neil wanted me to write</description>
   <maintainer email="bryce@rtr.ai">Bryce</maintainer>
   <license>Proprietary</license>
