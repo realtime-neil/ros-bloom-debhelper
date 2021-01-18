@@ -1,5 +1,0 @@
-# @CMAKE_INSTALL_FULL_SYSCONFDIR@/rsyslog.d/99-@PROJECT_NAME@.conf
-#
-# This is a rsyslog filter rule config file
-
-:syslogtag,contains,"[@PROJECT_NAME@]" @CMAKE_INSTALL_FULL_LOCALSTATEDIR@/log/@PROJECT_NAME@/@PROJECT_NAME@.log
